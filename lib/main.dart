@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'add_experience_view.dart';
 import 'add_review_view.dart';
 import 'map_view.dart';
-import 'history_view.dart'; // Importar la nueva vista de History
+import 'history_view.dart';
+import 'shortest_route_view.dart'; // Importar la vista de la ruta
 
 void main() {
   runApp(MyApp());
@@ -101,6 +102,23 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
               child: Text('Ver Historial'),
+            ),
+            SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                // Navegar a la pantalla de la ruta más corta
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => RouteView()),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: Text('Ver Ruta Más Corta'),
             ),
           ],
         ),
