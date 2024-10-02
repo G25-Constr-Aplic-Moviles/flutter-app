@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:test3/models/food.dart';
+import 'package:test3/components/navigation_bar.dart' as customNavBar;
 
 
 class DishPage extends StatefulWidget {
@@ -16,6 +17,17 @@ class _DishPageState extends State<DishPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context); // Navigate back to the previous screen
+          },
+        ),
+        //title: Text(''),
+        backgroundColor: Colors.white,
+        elevation: 0,
+      ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16.0),
         child: Column(
@@ -57,6 +69,7 @@ class _DishPageState extends State<DishPage> {
           ],
         ),
       ),
+    bottomNavigationBar: customNavBar.NavigationBar(),
     );
   }
 }
