@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:test3/models/experience.dart';
 import 'package:test3/models/food.dart';
 import 'package:test3/components/navigation_bar.dart' as customNavBar;
 
@@ -13,6 +14,7 @@ class DishPage extends StatefulWidget {
 class _DishPageState extends State<DishPage> {
 
   final food = Food(image: "assets/images/arroz_lomo.png", price: "21.000", name: "Arroz de lomo");
+  final experience = Experience(experience: "El Arroz de Lomo fue una delicia total. Cada bocado estaba lleno de sabor, con el lomo tierno y jugoso que se deshacía en la boca. La mezcla de pimientos y cebolla le da un toque dulce y ahumado que equilibra perfectamente con el arroz esponjoso. Además, la salsa de soya y jengibre es el complemento ideal, agregando una capa extra de sabor que lo hace irresistible. Sin duda, este plato se ha convertido en uno de mis favoritos. ¡Altamente recomendado!");
 
   @override
   Widget build(BuildContext context) {
@@ -63,9 +65,56 @@ class _DishPageState extends State<DishPage> {
             Text(
               'Un plato clásico elevado a nuevas alturas. Arroz jazmín perfectamente cocido, impregnado con un caldo de carne rico y sabroso, acompañado de jugosos trozos de lomo de res salteados al punto perfecto. Se combina con pimientos asados, cebolla caramelizada y un toque de ajo para un sabor profundo y envolvente.',
               style: const TextStyle(
-                fontSize: 25
+                fontSize: 20,
+                height: 1.2,
               ),
+              textAlign: TextAlign.justify,
             ),
+
+            SizedBox(height: 10),
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+
+                Text(
+                  'Experiencias',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 25
+                  ),
+                ),
+
+                FloatingActionButton.small(
+                  backgroundColor: Colors.redAccent,
+                  tooltip: 'Increment',
+                  onPressed: (){},
+                  child: const Icon(Icons.add, color: Colors.white, size: 28),
+                ), 
+              ],
+            ),
+
+            Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20), // Esquinas redondeadas
+                  border: Border.all(
+                    color: Colors.black, // Color del borde
+                    width: 2.0,         // Grosor del borde
+                  ),
+                ),
+                child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                                      experience.experience,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 15,
+                                      ),
+                                    textAlign: TextAlign.justify,
+                                    softWrap: true,
+                                    ),
+                          ),
+              ),
           ],
         ),
       ),
