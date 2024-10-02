@@ -3,6 +3,7 @@ import 'package:test3/components/food_booklet.dart';
 import 'package:test3/models/food.dart';
 import 'package:test3/models/review.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:test3/components/navigation_bar.dart' as customNavBar;
 
 class RestaurantPage extends StatefulWidget {
    const RestaurantPage({super.key});
@@ -29,6 +30,17 @@ class _RestaurantPageState extends State<RestaurantPage>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context); // Navigate back to the previous screen
+          },
+        ),
+        //title: Text(''),
+        backgroundColor: Colors.white,
+        elevation: 0,
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(15.0),
@@ -211,6 +223,7 @@ class _RestaurantPageState extends State<RestaurantPage>{
             ],
           ),),
       ),
+      bottomNavigationBar: customNavBar.NavigationBar(),
     );
   }
 }
