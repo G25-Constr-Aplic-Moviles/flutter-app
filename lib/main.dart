@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:test3/pages/restaurant_page.dart';
-import 'views/login.view.dart';
+import 'pages/login_page.dart';
 
 void main() {
   runApp(const MyApp());
