@@ -27,31 +27,37 @@ class RegisterPage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12.0),
                 ),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    const TextField(decoration: InputDecoration(
-                      labelText: 'First Name',
-                      focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.blue),
-                      ),
-                    ),),
-                    const TextField(decoration: InputDecoration(
-                      labelText: 'Last Name',
-                      focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.blue),
-                      ),),),
-                    const TextField(decoration: InputDecoration(
-                      labelText: 'Email address',
-                      focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.blue),
-                      ),
-                    ),),
-                    const TextField(decoration: InputDecoration(
-                      labelText: 'Password',
-                      focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.blue),
-                      ),
-                    ),),
-                    const SizedBox(height: 40),
+                    const Text('First Name',),
+                    const TextField(
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        hintText: 'John',),
+                    ), const SizedBox(height: 10),
+
+                    const Text('Last Name',),
+                    const TextField(
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        hintText: 'Doe',),
+                    ), const SizedBox(height: 10),
+
+                    const Text('Email Address',),
+                    const TextField(
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        hintText: 'example@email.com',),
+                    ), const SizedBox(height: 10),
+
+                    const Text('Password',),
+                    const TextField(
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        hintText: 'pass123!',),
+                    ),const SizedBox(height: 10),
+
+                    const SizedBox(height: 30),
                     SizedBox(
                       width: 284,
                       child: ElevatedButton(

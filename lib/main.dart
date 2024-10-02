@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         fontFamily: 'Gidugu',
       ),
-      home: RegisterPage(),
+      home: const LoginView(),
     );
   }
 }
