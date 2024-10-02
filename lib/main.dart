@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'add_experience_view.dart';
 import 'add_review_view.dart';
-import 'map_view.dart';
+
+import 'map_view.dart'; // Asegúrate de que el nombre sea el mismo que el archivo donde tienes el mapa
 
 void main() {
   runApp(MyApp());
