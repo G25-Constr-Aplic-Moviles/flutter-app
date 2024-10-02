@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:test3/components/food_booklet.dart';
 import 'package:test3/models/food.dart';
+import 'package:test3/components/navigation_bar.dart' as customNavBar;
 
 class FullMenuPage extends StatefulWidget {
   const FullMenuPage({super.key});
@@ -26,6 +27,17 @@ class _FullMenuPage extends State<FullMenuPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context); // Navigate back to the previous screen
+          },
+        ),
+        //title: Text(''),
+        backgroundColor: Colors.white,
+        elevation: 0,
+      ),
       body: 
           Padding(
             padding: const EdgeInsets.all(15.0),
@@ -69,6 +81,7 @@ class _FullMenuPage extends State<FullMenuPage> {
               ],
             ), 
           ),
+          bottomNavigationBar: customNavBar.NavigationBar(),
     );
   }
 }
