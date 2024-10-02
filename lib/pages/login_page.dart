@@ -12,11 +12,11 @@ class LoginView extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[Image.asset('assets/images/logo.png',
-        width: 146,
-          height: 200,),
+        width: 150,
+          height: 150,),
         Container(
           padding: const EdgeInsets.all(15.0),
-          height: 300,
+          height: 400,
           width: 284,
           decoration: BoxDecoration(
             color: Colors.white,
@@ -27,24 +27,30 @@ class LoginView extends StatelessWidget {
             borderRadius: BorderRadius.circular(12.0),
           ),
           child: Column(
-            children: <Widget>[const Text('Log in to your account', style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 20,),),
-              const SizedBox(height: 20),
-              const TextField(decoration: InputDecoration(
-                labelText: 'Email',
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.blue),
-                ),
-              ),),
-              const TextField(decoration: InputDecoration(
-                labelText: 'Password',
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.blue),
-                ),
-              ),
-                ),
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              const Text('Login to your account', style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,),),
               const SizedBox(height: 40),
+
+              const Row(crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[Text('Email Address',),],),
+              const TextField(
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: 'example@email.com',),
+              ), const SizedBox(height: 10),
+
+              const Row (crossAxisAlignment: CrossAxisAlignment.start ,
+                  children: [Text('First Name',),]),
+              const TextField(
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: 'John',),
+              ), const SizedBox(height: 10),
+
+              const SizedBox(height: 20),
               SizedBox(
                 width: 284,
                 child: ElevatedButton(
