@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:test3/pages/restaurant_page.dart';
+import 'views/login.view.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,7 +16,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         fontFamily: 'Gidugu',
       ),
-      home: RestaurantPage(),
+      home: LoginView(),
     );
   }
 }
