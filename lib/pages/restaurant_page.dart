@@ -4,6 +4,7 @@ import 'package:test3/models/food.dart';
 import 'package:test3/models/review.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:test3/components/navigation_bar.dart' as customNavBar;
+import 'package:test3/pages/full_menu_page.dart';
 
 class RestaurantPage extends StatefulWidget {
    const RestaurantPage({super.key});
@@ -71,14 +72,23 @@ class _RestaurantPageState extends State<RestaurantPage>{
                   ),
                   
                   Expanded(
-                    child: Text(
-                                "Menu completo",
-                                textAlign: TextAlign.right,
-                                style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 30, 
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context, 
+                          MaterialPageRoute(builder: (context) => FullMenuPage()),
+                          );
+                      },
+                      child: Text(
+                                  "Menu completo",
+                                  textAlign: TextAlign.right,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 30, 
+                                    color: Color.fromARGB(255, 5, 82, 215)
+                                  ),
                                 ),
-                              ),
+                    ),
                   ),  
                 ],
               ),
