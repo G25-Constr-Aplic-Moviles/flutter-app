@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'route_model.dart';
-import 'restaurant_model.dart';
-import 'api_service.dart';
+import '/../models/route_model.dart';
+import '/../models/restaurant_model.dart';
+import '/../services/api_service.dart';
 
 class RouteViewModel extends ChangeNotifier {
   LocationData? _currentLocation;
