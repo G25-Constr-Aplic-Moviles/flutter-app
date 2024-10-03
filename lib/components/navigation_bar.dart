@@ -11,6 +11,7 @@ class _NavigationBarState extends State<NavigationBar> {
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
+      backgroundColor: Colors.red,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
@@ -26,7 +27,7 @@ class _NavigationBarState extends State<NavigationBar> {
           ),
         ],
         currentIndex: 0,
-        selectedItemColor: Colors.red,
+        selectedItemColor: Colors.white,
         onTap: (index) {
           if (index == 0) {
             Navigator.pop(context);
