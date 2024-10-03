@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:test3/pages/register_page.dart';
-import 'package:test3/pages/restaurant_page.dart';
-import 'package:test3/pages/restaurants_list.dart';
+import 'package:provider/provider.dart';
+import 'package:test3/viewmodels/LoginViewModel.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'pages/login_page.dart';
 
-void main() {
+void main() async {
+  await dotenv.load(fileName: '.env');
   runApp(const MyApp());
 }
 
@@ -13,13 +14,15 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        fontFamily: 'Gidugu',
+    return ChangeNotifierProvider(
+      create: (context) => LoginViewModel(),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          fontFamily: 'Gidugu',
+        ),
+        home: const LoginView(),
       ),
-      home: const RestaurantsListPage(),
     );
   }
 }
-
