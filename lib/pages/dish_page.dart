@@ -11,9 +11,9 @@ class DishPage extends StatefulWidget {
   State<DishPage> createState() => _DishPageState();
 }
 
-class _DishPageState extends State<DishPage> {
-
-  final food = Food(image: "assets/images/arroz_lomo.png", price: "21.000", name: "Arroz de lomo");
+class _DishPageState extends State<DishPage>{ 
+  
+  final food = Food(id: 2, imageUrl: "assets/images/arroz_lomo.png", price: 20, name: "Arroz de lomo", description: "chao");
   final experience = Experience(experience: "El Arroz de Lomo fue una delicia total. Cada bocado estaba lleno de sabor, con el lomo tierno y jugoso que se deshacía en la boca. La mezcla de pimientos y cebolla le da un toque dulce y ahumado que equilibra perfectamente con el arroz esponjoso. Además, la salsa de soya y jengibre es el complemento ideal, agregando una capa extra de sabor que lo hace irresistible. Sin duda, este plato se ha convertido en uno de mis favoritos. ¡Altamente recomendado!");
 
   @override
@@ -40,7 +40,7 @@ class _DishPageState extends State<DishPage> {
                 borderRadius: BorderRadius.circular(8.0),
                 child: 
                   Image.asset(
-                    food.image,
+                    food.imageUrl,
                     width: double.infinity,
                     height: 200,
                     fit: BoxFit.cover
@@ -56,7 +56,7 @@ class _DishPageState extends State<DishPage> {
             ),
 
             Text(
-              '\$' + food.price,
+              '\$' + food.price.toString(),
               style: const TextStyle(
                     fontSize: 30, 
               ),
