@@ -35,7 +35,7 @@ class RouteViewModel extends ChangeNotifier {
     if (_currentLocation == null) return;
 
     try {
-      final String apiKey = 'YOUR_GOOGLE_API_KEY';
+      final String apiKey = 'AIzaSyBCmuFDXquBd5vdxehcjkgSglXoA6e6-_s';
       Map<String, dynamic> data = await _apiService.fetchRoute(
         _currentLocation!.latitude!,
         _currentLocation!.longitude!,
