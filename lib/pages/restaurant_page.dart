@@ -18,10 +18,10 @@ class _RestaurantPageState extends State<RestaurantPage>{
   // menu de comidas
    List foodMenu = [
     // Sushi rock n roll
-    Food(image: "assets/images/sushi_rock_n_roll.png", price: "19.000", name: "Sushi rock n roll"),
+    Food(id: 1, imageUrl: "assets/images/sushi_rock_n_roll.png", price: 19000, name: "Sushi rock n roll", description: "Sushi rock n roll"),
 
     // Arroz de lomo
-    Food(image: "assets/images/arroz_lomo.png", price: "21.000", name: "Arroz de lomo")
+    Food(id: 2, imageUrl: "assets/images/arroz_lomo.png", price: 21000, name: "Arroz de lomo", description: "Arroz de lomo")
   ];
 
   // reseña que se muestra principalmente

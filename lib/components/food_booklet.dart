@@ -19,7 +19,7 @@ class FoodBooklet extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Image.asset(food.image),
+          Image.asset(food.imageUrl),
 
           Text(
             food.name,
@@ -29,7 +29,7 @@ class FoodBooklet extends StatelessWidget {
           ),
 
           Text(
-            '\$'+ food.price,
+            '\$'+ food.price.toString(),
             style: const TextStyle(
               fontSize: 20
             ),

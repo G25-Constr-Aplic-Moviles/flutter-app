@@ -14,14 +14,13 @@ class _FullMenuPage extends State<FullMenuPage> {
 
     // menu de comidas
    List foodMenu = [
-    Food(image: "assets/images/sushi_rock_n_roll.png", price: "19.000", name: "Sushi rock n roll"),
-    Food(image: "assets/images/arroz_lomo.png", price: "21.000", name: "Arroz de lomo"),
-    Food(image: "assets/images/sushi_rock_n_roll.png", price: "19.000", name: "Sushi rock n roll"),
-    Food(image: "assets/images/arroz_lomo.png", price: "21.000", name: "Arroz de lomo"),
-    Food(image: "assets/images/sushi_rock_n_roll.png", price: "19.000", name: "Sushi rock n roll"),
-    Food(image: "assets/images/arroz_lomo.png", price: "21.000", name: "Arroz de lomo"),
-    Food(image: "assets/images/sushi_rock_n_roll.png", price: "19.000", name: "Sushi rock n roll"),
-    Food(image: "assets/images/arroz_lomo.png", price: "21.000", name: "Arroz de lomo"),
+    Food(id: 1, imageUrl: "assets/images/sushi_rock_n_roll.png", price: 19, name: "Sushi rock n roll", description: "hola"),
+    Food(id: 2, imageUrl: "assets/images/arroz_lomo.png", price: 20, name: "Arroz de lomo", description: "chao"),
+    Food(id: 3, imageUrl: "assets/images/sushi_rock_n_roll.png", price: 19, name: "Sushi rock n roll", description: "hola"),
+    Food(id: 4, imageUrl: "assets/images/arroz_lomo.png", price: 20, name: "Arroz de lomo", description: "chao"),
+    Food(id: 5, imageUrl: "assets/images/sushi_rock_n_roll.png", price: 19, name: "Sushi rock n roll", description: "hola"),
+    Food(id: 6, imageUrl: "assets/images/arroz_lomo.png", price: 20, name: "Arroz de lomo", description: "chao"),
+    
   ];
   
   @override
