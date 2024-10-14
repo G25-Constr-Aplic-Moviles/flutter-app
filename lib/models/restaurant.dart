@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import 'dart:ffi';
 import 'package:test3/models/food.dart';
 import 'package:test3/models/location.dart';
 
@@ -11,6 +11,8 @@ class Restaurant {
   final String imageUrl;
   final List<Food> menuIds;
   final Location location;
+  final String address;
+  final Float averageRating;
 
   Restaurant({
     required this.id, 
@@ -20,14 +22,18 @@ class Restaurant {
     required this.totalReviews, 
     required this.imageUrl, 
     required this.menuIds, 
-    required this.location
+    required this.location,
+    required this.averageRating,
+    required this.address
   });
 
   factory Restaurant.fromJson(Map<String, dynamic> json) {
     return Restaurant(
       id: json['restaurant_id'], 
       name: json['name'], 
-      cuisineType: json['cuisine_type'], 
+      cuisineType: json['cuisine_type'],
+      address:json['address'],
+      averageRating: json['average_rating'],
       price: json['price'], 
       totalReviews: json['total_reviews'], 
       imageUrl: json['image_url'], 

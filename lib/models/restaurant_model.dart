@@ -1,12 +1,20 @@
 class Restaurant {
+  final int id;
   final String name;
+  final String cuisineType;
+  final int totalReviews;
+  final String imageUrl;
   final String address;
+  final double averageRating;
   final double latitude;
   final double longitude;
-  final String imageUrl;
 
   Restaurant({
+    required this.id,
     required this.name,
+    required this.cuisineType,
+    required this.totalReviews,
+    required this.averageRating,
     required this.address,
     required this.latitude,
     required this.longitude,
@@ -20,6 +28,12 @@ class Restaurant {
       latitude: json['location']['latitude'],
       longitude: json['location']['longitude'],
       imageUrl: json['image_url'],
+      id: json['restaurant_id'],
+      cuisineType: json['cuisine_type'],
+      totalReviews: json['total_reviews'],
+      averageRating: json['average_rating'] is int
+          ? (json['average_rating'] as int).toDouble()
+          : double.parse(json['average_rating'].toString()),
     );
   }
 }

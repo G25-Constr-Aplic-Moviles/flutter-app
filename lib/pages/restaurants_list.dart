@@ -39,7 +39,7 @@ class RestaurantsListPage extends StatelessWidget {
           ),
         ],
       ),
-      bottomNavigationBar: custom_nav_bar.NavigationBar(),
+      bottomNavigationBar: const custom_nav_bar.NavigationBar(),
       body: Consumer<RestaurantsListViewModel>(
         builder: (context, viewModel, child) {
           if (viewModel.restaurants.isEmpty) {
@@ -53,6 +53,11 @@ class RestaurantsListPage extends StatelessWidget {
               return RestaurantCard(
                 imageUrl: restaurant.imageUrl,
                 name: restaurant.name,
+                averageRating: restaurant.averageRating,
+                reviewCount: restaurant.totalReviews,
+                address: restaurant.address,
+                restaurantType: restaurant.cuisineType,
+
                 onTap: () {
                   // Establecer el restaurante seleccionado y navegar a la vista de ruta
                   Navigator.push(
