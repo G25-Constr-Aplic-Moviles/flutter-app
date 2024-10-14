@@ -31,7 +31,7 @@ class RestaurantsListPage extends StatelessWidget {
         ),
         title: const Text(
           'GASTROANDES',
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(fontWeight: FontWeight.bold , fontSize: 25),
         ),
         actions: <Widget>[
           Image.asset(
@@ -40,37 +40,70 @@ class RestaurantsListPage extends StatelessWidget {
         ],
       ),
       bottomNavigationBar: const custom_nav_bar.NavigationBar(),
-      body: Consumer<RestaurantsListViewModel>(
-        builder: (context, viewModel, child) {
-          if (viewModel.restaurants.isEmpty) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          return ListView.builder(
-            itemCount: viewModel.restaurants.length,
-            itemBuilder: (context, index) {
-              final restaurant = viewModel.restaurants[index];
-              return RestaurantCard(
-                imageUrl: restaurant.imageUrl,
-                name: restaurant.name,
-                averageRating: restaurant.averageRating,
-                reviewCount: restaurant.totalReviews,
-                address: restaurant.address,
-                restaurantType: restaurant.cuisineType,
-
-                onTap: () {
-                  // Establecer el restaurante seleccionado y navegar a la vista de ruta
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => RouteView(restaurant: restaurant),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    decoration: InputDecoration(
+                      hintText: 'Find Restaurant...',
+                      prefixIcon: const Icon(Icons.search),
+                      suffixIcon: IconButton(
+                        icon: const Icon(Icons.filter_list),
+                        onPressed: () {
+                          // TODO: filter logic
+                        },
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
                     ),
-                  );
-                },
-              );
-            },
-          );
-        },
+                    onChanged: (value) {
+
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: Consumer<RestaurantsListViewModel>(
+              builder: (context, viewModel, child) {
+                if (viewModel.restaurants.isEmpty) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                return ListView.builder(
+                  itemCount: viewModel.restaurants.length,
+                  itemBuilder: (context, index) {
+                    final restaurant = viewModel.restaurants[index];
+                    return RestaurantCard(
+                      imageUrl: restaurant.imageUrl,
+                      name: restaurant.name,
+                      averageRating: restaurant.averageRating,
+                      reviewCount: restaurant.totalReviews,
+                      address: restaurant.address,
+                      restaurantType: restaurant.cuisineType,
+
+                      onTap: () {
+                        // Establecer el restaurante seleccionado y navegar a la vista de ruta
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => RouteView(restaurant: restaurant),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
