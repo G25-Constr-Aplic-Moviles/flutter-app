@@ -37,4 +37,29 @@ class UserService implements UserRepository {
       return false;
     }
   }
+
+  @override
+  Future<bool> register(String firstName, String lastName, String email, String password) async {
+    final response = await http.post(
+      Uri.parse(dotenv.env['USERS_API_URL']!),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'firstName': firstName,
+        'lastName': lastName,
+        'email': email,
+        'password': password,
+      }),
+    );
+
+    if (response.statusCode == 201) {
+      final responseBody = jsonDecode(response.body);
+      TokenManager().setToken(responseBody['token']);
+      TokenManager().setUserId(responseBody['id']);
+      return true;
+    } else {
+      return false;
+    }
+  }
 }
