@@ -1,11 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:test3/pages/restaurants_list.dart';
- // Asegúrate de tener este archivo en tu proyecto
+import 'package:test3/services/user_service.dart';
 
 class RegisterViewModel extends ChangeNotifier {
+  final UserService userService;
+
   String firstName = '';
   String lastName = '';
   String email = '';
@@ -13,41 +14,33 @@ class RegisterViewModel extends ChangeNotifier {
   bool isLoading = false;
   String errorMessage = '';
 
-  Future<void> register(BuildContext context) async {
-    final apiUrl = dotenv.env['USERS_API_URL'];
-    if (apiUrl == null) {
-      errorMessage = 'API URL is not set';
-      notifyListeners();
-      return;
-    }
+  RegisterViewModel({required this.userService});
 
+  Future<void> register(BuildContext context) async {
     isLoading = true;
     notifyListeners();
 
-    final response = await http.post(
-      Uri.parse('$apiUrl'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, String>{
-        'firstName': firstName,
-        'lastName': lastName,
-        'email': email,
-        'password': password,
-      }),
-    );
+    try {
+      final isRegistered = await userService.register(firstName, lastName, email, password).timeout(const Duration(seconds: 2));
 
-    isLoading = false;
+      isLoading = false;
 
-    if (response.statusCode == 200) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => RestaurantsListPage()),
-      );
-      notifyListeners();
-    } else {
-      errorMessage = 'Failed to register';
-      notifyListeners();
+      if (isRegistered) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const RestaurantsListPage()),
+        );
+      } else {
+        errorMessage = 'Failed! Try another email';
+      }
+    } on TimeoutException catch (_) {
+      isLoading = false;
+      errorMessage = 'server timeout!';
+    } catch (e) {
+      isLoading = false;
+      errorMessage = 'An error occurred!';
     }
+
+    notifyListeners();
   }
 }

@@ -1,11 +1,14 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:test3/viewmodels/RegisterViewModel.dart';
 
 class RegisterPage extends StatelessWidget {
   const RegisterPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final registerViewModel = Provider.of<RegisterViewModel>(context);
+
     return Scaffold(
       backgroundColor: const Color.fromRGBO(255, 82, 71, 1),
       body: Center(
@@ -37,41 +40,56 @@ class RegisterPage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     const Text('First Name'),
-                    const TextField(
-                      decoration: InputDecoration(
+                    TextField(
+                      decoration: const InputDecoration(
                         border: OutlineInputBorder(),
                         hintText: 'John',
                       ),
+                      onChanged: (value) {
+                        registerViewModel.firstName = value;
+                      },
                     ),
                     const SizedBox(height: 10),
                     const Text('Last Name'),
-                    const TextField(
-                      decoration: InputDecoration(
+                    TextField(
+                      decoration: const InputDecoration(
                         border: OutlineInputBorder(),
                         hintText: 'Doe',
                       ),
+                      onChanged: (value) {
+                        registerViewModel.lastName = value;
+                      },
                     ),
                     const SizedBox(height: 10),
                     const Text('Email Address'),
-                    const TextField(
-                      decoration: InputDecoration(
+                    TextField(
+                      decoration: const InputDecoration(
                         border: OutlineInputBorder(),
                         hintText: 'example@email.com',
                       ),
+                      onChanged: (value) {
+                        registerViewModel.email = value;
+                      },
                     ),
                     const SizedBox(height: 10),
                     const Text('Password'),
-                    const TextField(
-                      decoration: InputDecoration(
+                    TextField(
+                      decoration: const InputDecoration(
                         border: OutlineInputBorder(),
                         hintText: 'pass123!',
                       ),
+                      obscureText: true,
+                      onChanged: (value) {
+                        registerViewModel.password = value;
+                      },
                     ),
                     const SizedBox(height: 20),
                     SizedBox(
                       width: 284,
                       child: ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () async {
+                          await registerViewModel.register(context);
+                        },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color.fromRGBO(183, 40, 31, 1),
                           shape: const RoundedRectangleBorder(
@@ -84,6 +102,16 @@ class RegisterPage extends StatelessWidget {
                         ),
                       ),
                     ),
+                    if (registerViewModel.errorMessage.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10),
+                        child: Center(
+                          child: Text(
+                            registerViewModel.errorMessage,
+                            style: const TextStyle(color: Colors.red),
+                          ),
+                        ),
+                      ),
                   ],
                 ),
               ),
