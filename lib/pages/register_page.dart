@@ -7,16 +7,23 @@ class RegisterPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: const Color.fromRGBO(255, 82, 71, 1),
-        body: Center(
+      backgroundColor: const Color.fromRGBO(255, 82, 71, 1),
+      body: Center(
+        child: SingleChildScrollView(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[Image.asset('assets/images/logo.png',
-              width: 100,
-              height: 100,),
+            children: <Widget>[
+              Image.asset(
+                'assets/images/logo.png',
+                width: 100,
+                height: 100,
+              ),
               Container(
                 padding: const EdgeInsets.all(20.0),
-                height: 420,
+                height: 450,
                 width: 284,
                 decoration: BoxDecoration(
                   color: Colors.white,
@@ -29,35 +36,38 @@ class RegisterPage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    const Text('First Name',),
+                    const Text('First Name'),
                     const TextField(
                       decoration: InputDecoration(
                         border: OutlineInputBorder(),
-                        hintText: 'John',),
-                    ), const SizedBox(height: 10),
-
-                    const Text('Last Name',),
+                        hintText: 'John',
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    const Text('Last Name'),
                     const TextField(
                       decoration: InputDecoration(
                         border: OutlineInputBorder(),
-                        hintText: 'Doe',),
-                    ), const SizedBox(height: 10),
-
-                    const Text('Email Address',),
+                        hintText: 'Doe',
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    const Text('Email Address'),
                     const TextField(
                       decoration: InputDecoration(
                         border: OutlineInputBorder(),
-                        hintText: 'example@email.com',),
-                    ), const SizedBox(height: 10),
-
-                    const Text('Password',),
+                        hintText: 'example@email.com',
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    const Text('Password'),
                     const TextField(
                       decoration: InputDecoration(
                         border: OutlineInputBorder(),
-                        hintText: 'pass123!',),
-                    ),const SizedBox(height: 10),
-
-                    const SizedBox(height: 30),
+                        hintText: 'pass123!',
+                      ),
+                    ),
+                    const SizedBox(height: 20),
                     SizedBox(
                       width: 284,
                       child: ElevatedButton(
@@ -66,9 +76,12 @@ class RegisterPage extends StatelessWidget {
                           backgroundColor: const Color.fromRGBO(183, 40, 31, 1),
                           shape: const RoundedRectangleBorder(
                             borderRadius: BorderRadius.zero,
-                          ),),
-                        child: const Text('Create Account',
-                            style: TextStyle(color: Colors.white)),
+                          ),
+                        ),
+                        child: const Text(
+                          'Create Account',
+                          style: TextStyle(color: Colors.white),
+                        ),
                       ),
                     ),
                   ],
@@ -76,7 +89,8 @@ class RegisterPage extends StatelessWidget {
               ),
             ],
           ),
-        )
+        ),
+      ),
     );
   }
 }
