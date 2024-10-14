@@ -1,8 +1,9 @@
 import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  final String _baseUrl = 'https://restaurantservice-375afbe356dc.herokuapp.com';
+  final String? _baseUrl = dotenv.env['RESTAURANT_API_URL'];
 
   Future<List<dynamic>> fetchRestaurants() async {
     final response = await http.get(Uri.parse('$_baseUrl/restaurant/list'));

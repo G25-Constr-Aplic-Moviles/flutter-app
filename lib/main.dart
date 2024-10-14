@@ -13,7 +13,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'pages/login_page.dart';
 
 void main() async {
-  await dotenv.load(fileName: 'test.env');
+  await dotenv.load(fileName: '.env');
   runApp(const MyApp());
 }
 
