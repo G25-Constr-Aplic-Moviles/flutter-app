@@ -4,6 +4,7 @@ import 'package:test3/pages/register_page.dart';
 import 'package:test3/pages/restaurant_page.dart';
 import 'package:test3/pages/restaurants_list.dart';
 import 'package:test3/pages/login_page.dart';
+import 'package:test3/services/user_service.dart';
 import 'package:test3/viewmodels/nearby_restaurants_viewmodel.dart';
 import 'package:test3/viewmodels/restaurants_list_viewmodel.dart';
 import 'package:test3/viewmodels/route_view_model.dart';
@@ -27,7 +28,7 @@ class MyApp extends StatelessWidget {
     ChangeNotifierProvider(create: (context) => NearbyRestaurantsViewModel()),
     ChangeNotifierProvider(create: (context) => RouteViewModel()),
     ChangeNotifierProvider(create: (context) => RestaurantsListViewModel()),
-    ChangeNotifierProvider(create: (context) => LoginViewModel()), // Adding LoginViewModel to the existing providers
+    ChangeNotifierProvider(create: (context) => LoginViewModel(userService: UserService())), // Adding LoginViewModel to the existing providers
   ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
