@@ -6,6 +6,7 @@ import '../components/navigation_bar.dart' as custom_nav_bar;
 import '../components/restaurant_card.dart';
 import 'route_view.dart';
 import 'nearby__restaurants_view.dart';
+import 'restaurant_page.dart';
 
 class RestaurantsListPage extends StatefulWidget {
   const RestaurantsListPage({super.key});
@@ -109,7 +110,7 @@ class _RestaurantsListPageState extends State<RestaurantsListPage> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => RouteView(restaurant: restaurant)),
+                          MaterialPageRoute(builder: (context) => RestaurantPage(restaurant: restaurant)),
                         );
                       },
                     );

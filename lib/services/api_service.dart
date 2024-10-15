@@ -18,6 +18,16 @@ class ApiService extends RestaurantRepository{
   }
 
   @override
+  Future<List> fetchMenu(int idRestaurant) async {
+    final response = await http.get(Uri.parse('$_baseUrl/menu_item/$idRestaurant'));
+    if(response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception('Failed to load menu: ${response.statusCode}'); 
+    }
+  }
+
+  @override
   Future<Map> fetchRoute(
       double originLat, double originLng, double destLat, double destLng, String apiKey) async {
     final String url =
