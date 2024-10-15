@@ -7,12 +7,25 @@ import '../components/restaurant_card.dart';
 import 'route_view.dart';
 import 'nearby__restaurants_view.dart';
 
-class RestaurantsListPage extends StatelessWidget {
+class RestaurantsListPage extends StatefulWidget {
   const RestaurantsListPage({super.key});
 
   @override
+  _RestaurantsListPageState createState() => _RestaurantsListPageState();
+}
+
+class _RestaurantsListPageState extends State<RestaurantsListPage> {
+  final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final restaurantsViewModel = Provider.of<RestaurantsListViewModel>(context, listen: false);
+    final restaurantsViewModel = Provider.of<RestaurantsListViewModel>(context);
     final routeViewModel = Provider.of<RouteViewModel>(context, listen: false);
 
     restaurantsViewModel.fetchRestaurants();
@@ -31,7 +44,7 @@ class RestaurantsListPage extends StatelessWidget {
         ),
         title: const Text(
           'GASTROANDES',
-          style: TextStyle(fontWeight: FontWeight.bold , fontSize: 25),
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
         actions: <Widget>[
           Image.asset(
@@ -48,13 +61,14 @@ class RestaurantsListPage extends StatelessWidget {
               children: [
                 Expanded(
                   child: TextField(
+                    controller: _searchController,
                     decoration: InputDecoration(
-                      hintText: 'Find Restaurant...',
+                      hintText: 'Buscar restaurantes...',
                       prefixIcon: const Icon(Icons.search),
                       suffixIcon: IconButton(
                         icon: const Icon(Icons.filter_list),
                         onPressed: () {
-                          // TODO: filter logic
+                          // Aquí puedes agregar la lógica para abrir los filtros
                         },
                       ),
                       border: OutlineInputBorder(
@@ -62,7 +76,7 @@ class RestaurantsListPage extends StatelessWidget {
                       ),
                     ),
                     onChanged: (value) {
-
+                      restaurantsViewModel.filterRestaurants(value);
                     },
                   ),
                 ),
@@ -77,9 +91,9 @@ class RestaurantsListPage extends StatelessWidget {
                 }
 
                 return ListView.builder(
-                  itemCount: viewModel.restaurants.length,
+                  itemCount: viewModel.filteredRestaurants.length,
                   itemBuilder: (context, index) {
-                    final restaurant = viewModel.restaurants[index];
+                    final restaurant = viewModel.filteredRestaurants[index];
                     return RestaurantCard(
                       imageUrl: restaurant.imageUrl,
                       name: restaurant.name,
@@ -87,19 +101,17 @@ class RestaurantsListPage extends StatelessWidget {
                       reviewCount: restaurant.totalReviews,
                       address: restaurant.address,
                       restaurantType: restaurant.cuisineType,
-
                       onTap: () {
                         // Establecer el restaurante seleccionado y navegar a la vista de ruta
                         Navigator.push(
                           context,
-                          MaterialPageRoute(
-                            builder: (context) => RouteView(restaurant: restaurant),
-                          ),
+                          MaterialPageRoute(builder: (context) => RouteView(restaurant: restaurant)),
                         );
                       },
                     );
                   },
                 );
+
               },
             ),
           ),
