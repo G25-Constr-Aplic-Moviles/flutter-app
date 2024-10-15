@@ -18,6 +18,13 @@ class _RestaurantsListPageState extends State<RestaurantsListPage> {
   final TextEditingController _searchController = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+    final restaurantsViewModel = Provider.of<RestaurantsListViewModel>(context, listen: false);
+    restaurantsViewModel.fetchRestaurants();
+  }
+
+  @override
   void dispose() {
     _searchController.dispose();
     super.dispose();
@@ -27,8 +34,6 @@ class _RestaurantsListPageState extends State<RestaurantsListPage> {
   Widget build(BuildContext context) {
     final restaurantsViewModel = Provider.of<RestaurantsListViewModel>(context);
     final routeViewModel = Provider.of<RouteViewModel>(context, listen: false);
-
-    restaurantsViewModel.fetchRestaurants();
 
     return Scaffold(
       appBar: AppBar(
@@ -111,7 +116,6 @@ class _RestaurantsListPageState extends State<RestaurantsListPage> {
                     );
                   },
                 );
-
               },
             ),
           ),
