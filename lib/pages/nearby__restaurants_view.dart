@@ -6,6 +6,7 @@ import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:io' show Platform;
 import '../viewmodels/nearby_restaurants_viewmodel.dart';
+import '../models/token_manager.dart'; // Importar TokenManager
 
 class NearbyRestaurantsView extends StatefulWidget {
   @override
@@ -38,15 +39,24 @@ class _NearbyRestaurantsViewState extends State<NearbyRestaurantsView> {
     DateTime _endTime = DateTime.now();
     double loadTime = _endTime.difference(_startTime).inMilliseconds / 1000;
 
+    // Obtener el userId desde el TokenManager
+    String? userId = TokenManager().userId;
+
+    // Si no hay un userId, puedes manejar el error aquí
+    if (userId == null) {
+      print("Error: No se encontró el userId");
+      return;
+    }
+
     // Obtener la URL del servicio desde el archivo .env
-    String herokuApiUrl = dotenv.env['API_KEY_HEROKU'] ?? '';
+    String herokuApiUrl = "https://analyticservice-553a4e950222.herokuapp.com/add_time";
 
     // Datos a enviar
     Map<String, dynamic> data = {
-      "plataforma": Platform.operatingSystem, // "Android", "iOS", "Windows", etc.
+      "plataforma": "Flutter", // "Android", "iOS", "Windows", etc.
       "tiempo": loadTime,
       "timestamp": _endTime.toUtc().toIso8601String(),
-      "userID": "example_user_id_123", // Deberías obtener el ID real del usuario aquí
+      "userID": userId, // Usar el userId del TokenManager
     };
 
     // Enviar los datos al servicio de Heroku
