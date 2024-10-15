@@ -44,7 +44,7 @@ class LoginViewModel extends ChangeNotifier {
       errorMessage = 'Request timed out. Please try again.';
     } catch (e) {
       isLoading = false;
-      errorMessage = 'An error occurred: $e';
+      errorMessage = 'Server Error. Retry!';
     }
 
     notifyListeners();
