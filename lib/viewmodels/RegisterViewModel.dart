@@ -25,7 +25,7 @@ class RegisterViewModel extends ChangeNotifier {
 
       isLoading = false;
 
-      if (isRegistered) {
+      if (isRegistered == true) {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const RestaurantsListPage()),
