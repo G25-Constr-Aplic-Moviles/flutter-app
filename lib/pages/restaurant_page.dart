@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:test3/components/food_booklet.dart';
 import 'package:test3/models/food.dart';
+import 'package:test3/models/restaurant_model.dart';
 import 'package:test3/models/review.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:test3/components/navigation_bar.dart' as customNavBar;
 import 'package:test3/pages/full_menu_page.dart';
+import 'package:test3/viewmodels/MenuItemViewModel.dart';
+import 'package:test3/viewmodels/restaurants_list_viewmodel.dart';
+import 'package:provider/provider.dart';
 
 class RestaurantPage extends StatefulWidget {
-   const RestaurantPage({super.key});
+   final Restaurant restaurant;
+
+   const RestaurantPage({super.key, required this.restaurant});
 
    @override
    State<RestaurantPage> createState() => _RestaurantPageState();
@@ -15,14 +21,12 @@ class RestaurantPage extends StatefulWidget {
 
 class _RestaurantPageState extends State<RestaurantPage>{
 
-  // menu de comidas
-   List foodMenu = [
-    // Sushi rock n roll
-    Food(id: 1, imageUrl: "assets/images/sushi_rock_n_roll.png", price: 19000, name: "Sushi rock n roll", description: "Sushi rock n roll"),
-
-    // Arroz de lomo
-    Food(id: 2, imageUrl: "assets/images/arroz_lomo.png", price: 21000, name: "Arroz de lomo", description: "Arroz de lomo")
-  ];
+  @override
+  void initState() {
+    super.initState();
+    final menuItemViewModel = Provider.of<MenuItemViewModel>(context, listen: false);
+    menuItemViewModel.fetchMenu(widget.restaurant.id);
+  }
 
   // reseña que se muestra principalmente
   final reviewPreview = Review(title: "Increible", username: "MarioLaserna777", numberStars: 5.0, 
@@ -48,10 +52,10 @@ class _RestaurantPageState extends State<RestaurantPage>{
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Image.asset('assets/images/yamato_sushi.png'),
+              Image.network(widget.restaurant.imageUrl),
               const SizedBox(height: 25),
               Text(
-                "YAMATO SUSHI",
+                widget.restaurant.name,
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 30, 
@@ -92,15 +96,19 @@ class _RestaurantPageState extends State<RestaurantPage>{
                   ),  
                 ],
               ),
-        
+              
               SizedBox(
                 height: 250,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: foodMenu.length,
-                  itemBuilder: (context, index) => FoodBooklet(
-                    food: foodMenu[index]
-                  ),
+                child: Consumer<MenuItemViewModel>(
+                  builder: (context, viewModel, child) {
+                    return ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: viewModel.foodMenu.length,
+                      itemBuilder: (context, index) => FoodBooklet(
+                        food: viewModel.foodMenu[index]
+                      ),  
+                    );
+                  },
                 ),
               ),
         
