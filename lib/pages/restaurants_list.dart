@@ -73,7 +73,7 @@ class _RestaurantsListPageState extends State<RestaurantsListPage> {
                       suffixIcon: IconButton(
                         icon: const Icon(Icons.filter_list),
                         onPressed: () {
-                          // Aquí puedes agregar la lógica para abrir los filtros
+                          // TODO: Filtros
                         },
                       ),
                       border: OutlineInputBorder(
@@ -107,7 +107,6 @@ class _RestaurantsListPageState extends State<RestaurantsListPage> {
                       address: restaurant.address,
                       restaurantType: restaurant.cuisineType,
                       onTap: () {
-                        // Establecer el restaurante seleccionado y navegar a la vista de ruta
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => RouteView(restaurant: restaurant)),
