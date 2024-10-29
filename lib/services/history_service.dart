@@ -5,6 +5,9 @@ import 'dart:convert';
 import 'package:test3/repositories/history_repository.dart';
 
 class HistoryService implements HistoryRepository {
+  final String? _baseUrl = dotenv.env['HISTORY_API_URL'];
+  final TokenManager _tokenManager = TokenManager();
+
   static final HistoryService _instance = HistoryService._internal();
 
   factory HistoryService() {
@@ -16,7 +19,7 @@ class HistoryService implements HistoryRepository {
   @override
   Future<List> fetchHistory() async {
     final response = await http.get(
-      Uri.parse('http://localhost:5001/history/7f0b6fa2-fbd3-4602-acb0-5cd319c1d2bc'),
+      Uri.parse('$_baseUrl/history/$_tokenManager.userId'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
