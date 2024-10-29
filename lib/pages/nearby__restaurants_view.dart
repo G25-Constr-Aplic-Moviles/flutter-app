@@ -6,7 +6,7 @@ import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:io' show Platform;
 import '../viewmodels/nearby_restaurants_viewmodel.dart';
-import '../models/token_manager.dart'; // Importar TokenManager
+import '../models/token_manager.dart';
 
 class NearbyRestaurantsView extends StatefulWidget {
   @override
@@ -20,13 +20,19 @@ class _NearbyRestaurantsViewState extends State<NearbyRestaurantsView> {
   @override
   void initState() {
     super.initState();
-    _startTime = DateTime.now(); // Capturamos el tiempo de inicio
+    _startTime = DateTime.now(); // Capture the start time
 
-    // Obtener la ubicación y los restaurantes desde el ViewModel al iniciar
+    // Get location and then restaurants from the ViewModel
     final viewModel = Provider.of<NearbyRestaurantsViewModel>(context, listen: false);
-    viewModel.getCurrentLocation();
-    viewModel.fetchNearbyRestaurants().then((_) {
-      _sendAnalytics(); // Enviar las métricas una vez que se carguen los restaurantes
+
+    // Await getCurrentLocation and then fetch restaurants
+    viewModel.getCurrentLocation().then((_) {
+      if (viewModel.currentLocation != null) {
+        // Fetch restaurants after location is available
+        viewModel.fetchNearbyRestaurants().then((_) {
+          _sendAnalytics(); // Send metrics after restaurants are loaded
+        });
+      }
     });
   }
 
@@ -35,34 +41,33 @@ class _NearbyRestaurantsViewState extends State<NearbyRestaurantsView> {
   }
 
   Future<void> _sendAnalytics() async {
-    // Capturar el tiempo que tomó cargar la vista
+    // Capture the time it took to load the view
     DateTime _endTime = DateTime.now();
     double loadTime = _endTime.difference(_startTime).inMilliseconds / 1000;
 
-    // Obtener el userId desde el TokenManager
+    // Obtain userId from TokenManager
     String? userId = TokenManager().userId;
 
-    // Si no hay un userId, puedes manejar el error aquí
     if (userId == null) {
-      print("Error: No se encontró el userId");
+      print("Error: User ID not found");
       return;
     }
 
-    // Obtener la URL del servicio desde el archivo .env
+    // Get service URL from .env file
     String herokuApiUrl = "https://analyticservice-553a4e950222.herokuapp.com/add_time";
 
-    // Datos a enviar
+    // Data to send
     Map<String, dynamic> data = {
       "plataforma": "Flutter", // "Android", "iOS", "Windows", etc.
       "tiempo": loadTime,
       "timestamp": _endTime.toUtc().toIso8601String(),
-      "userID": userId, // Usar el userId del TokenManager
+      "userID": userId,
     };
 
-    // Enviar los datos al servicio de Heroku
+    // Send data to Heroku service
     try {
       final response = await http.post(
-        Uri.parse(herokuApiUrl), // Usar la variable del archivo .env
+        Uri.parse(herokuApiUrl),
         headers: {
           'Content-Type': 'application/json',
         },
@@ -70,12 +75,12 @@ class _NearbyRestaurantsViewState extends State<NearbyRestaurantsView> {
       );
 
       if (response.statusCode == 200) {
-        print("Métricas enviadas correctamente.");
+        print("Metrics sent successfully.");
       } else {
-        print("Error al enviar métricas: ${response.body}");
+        print("Error sending metrics: ${response.body}");
       }
     } catch (e) {
-      print("Error al conectar con el servicio de Heroku: $e");
+      print("Error connecting to Heroku service: $e");
     }
   }
 
