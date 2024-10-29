@@ -33,22 +33,22 @@ class NearbyRestaurantsViewModel extends ChangeNotifier {
 
   Future<void> fetchNearbyRestaurants() async {
     try {
+      if (_currentLocation == null) return; // Ensure location is available
+
       List<dynamic> data = await _apiService.fetchRestaurants();
       List<Restaurant> allRestaurants = data.map((item) => Restaurant.fromJson(item)).toList();
 
-      if (_currentLocation != null) {
-        _restaurants = allRestaurants.where((restaurant) {
-          double distance = _calculateDistance(
-            _currentLocation!.latitude!,
-            _currentLocation!.longitude!,
-            restaurant.latitude,
-            restaurant.longitude,
-          );
+      _restaurants = allRestaurants.where((restaurant) {
+        double distance = _calculateDistance(
+          _currentLocation!.latitude!,
+          _currentLocation!.longitude!,
+          restaurant.latitude,
+          restaurant.longitude,
+        );
 
-          // Filtrar restaurantes que estén a menos de 1 km
-          return distance <= 1.0;
-        }).toList();
-      }
+        // Filter restaurants within 1 km range
+        return distance <= 1.0;
+      }).toList();
 
       notifyListeners();
     } catch (e) {
@@ -57,7 +57,7 @@ class NearbyRestaurantsViewModel extends ChangeNotifier {
   }
 
   double _calculateDistance(double lat1, double lon1, double lat2, double lon2) {
-    const int radiusOfEarth = 6371; // Radio de la Tierra en km
+    const int radiusOfEarth = 6371; // Radius of Earth in km
     double dLat = _degreeToRadian(lat2 - lat1);
     double dLon = _degreeToRadian(lon2 - lon1);
     double a = sin(dLat / 2) * sin(dLat / 2) +
