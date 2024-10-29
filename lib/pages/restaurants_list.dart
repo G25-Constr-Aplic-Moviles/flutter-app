@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:test3/models/token_manager.dart';
 import '../viewmodels/restaurants_list_viewmodel.dart';
 import '../viewmodels/route_view_model.dart';
 import '../components/navigation_bar.dart' as custom_nav_bar;
@@ -84,6 +85,29 @@ class _RestaurantsListPageState extends State<RestaurantsListPage> {
                     onChanged: (value) {
                       restaurantsViewModel.filterRestaurants(value);
                     },
+                  ),
+                ),
+                const SizedBox(width: 8),
+                SizedBox(
+                  height: 48,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      final userId = TokenManager().userId;
+                      if(userId != null){
+                        restaurantsViewModel.fetchRecommendedRestaurants(userId);
+                      } else {
+                        print("User ID no encontrado. Asegurate que el usuario este autenticado");
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      )
+                    ),
+                    child: const Icon(
+                      Icons.star_border_outlined,
+                      color: Color.fromRGBO(255, 82, 71, 1)
+                      ),
                   ),
                 ),
               ],
