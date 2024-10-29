@@ -86,6 +86,13 @@ class _HistoryPageState extends State<HistoryPage> {
       }
       int leastVisitedId = visitCounts.entries.reduce((a, b) => a.value < b.value ? a : b).key;
       filtered = filtered.where((entry) => entry['restaurant_id'] == leastVisitedId).toList();
+    } else if (_filterOption == 'Visited This Week') {
+      DateTime now = DateTime.now();
+      DateTime oneWeekAgo = now.subtract(Duration(days: 7));
+      filtered = filtered.where((entry) {
+        var visitDate = DateFormat("EEE, dd MMM yyyy HH:mm:ss 'GMT'").parseUTC(entry['timestamp']).toLocal();
+        return visitDate.isAfter(oneWeekAgo) && visitDate.isBefore(now);
+      }).toList();
     }
 
     setState(() {
@@ -96,6 +103,14 @@ class _HistoryPageState extends State<HistoryPage> {
   void _showRestaurantHistory(int restaurantId) {
     var restaurantHistory = _history.where((entry) => entry['restaurant_id'] == restaurantId).toList();
     var restaurantName = _restaurants[restaurantId]?.name ?? 'Unknown';
+
+    // Calcular el número de visitas en la última semana
+    DateTime now = DateTime.now();
+    DateTime oneWeekAgo = now.subtract(Duration(days: 7));
+    int visitsThisWeek = restaurantHistory.where((entry) {
+      var visitDate = DateFormat("EEE, dd MMM yyyy HH:mm:ss 'GMT'").parseUTC(entry['timestamp']).toLocal();
+      return visitDate.isAfter(oneWeekAgo) && visitDate.isBefore(now);
+    }).length;
 
     showDialog(
       context: context,
@@ -112,7 +127,7 @@ class _HistoryPageState extends State<HistoryPage> {
               children: [
                 Align(
                   alignment: Alignment.centerLeft,
-                  child: Text('Total visits: ${restaurantHistory.length}'),
+                  child: Text('Total visits: ${restaurantHistory.length} - This week: $visitsThisWeek'),
                 ),
                 SizedBox(height: 10),
                 Expanded(
@@ -145,7 +160,7 @@ class _HistoryPageState extends State<HistoryPage> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text(
+              child: const Text(
                 'Close',
                 style: TextStyle(fontSize: 18),
               ),
@@ -187,7 +202,7 @@ class _HistoryPageState extends State<HistoryPage> {
                           });
                         },
                         itemBuilder: (BuildContext context) {
-                          return ['All', 'Most Visited', 'Least Visited'].map((String choice) {
+                          return ['All', 'Most Visited', 'Least Visited', 'Visited This Week'].map((String choice) {
                             return PopupMenuItem<String>(
                               value: choice,
                               child: Text(choice),
