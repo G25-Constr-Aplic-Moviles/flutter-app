@@ -102,16 +102,6 @@ class RegisterPage extends StatelessWidget {
                         ),
                       ),
                     ),
-                    if (registerViewModel.errorMessage.isNotEmpty)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 10),
-                        child: Center(
-                          child: Text(
-                            registerViewModel.errorMessage,
-                            style: const TextStyle(color: Colors.red),
-                          ),
-                        ),
-                      ),
                   ],
                 ),
               ),

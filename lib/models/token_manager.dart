@@ -9,6 +9,8 @@ class TokenManager {
 
   TokenManager._internal();
 
+  static TokenManager get instance => _instance;
+
   String? get token => _token;
   String? get userId => _userId;
 

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:test3/pages/history_page.dart';
 import 'package:test3/pages/login_page.dart';
 import 'package:test3/pages/restaurants_list.dart';
+
+import '../models/token_manager.dart';
 
 class NavigationBar extends StatefulWidget {
   const NavigationBar({super.key});
@@ -13,7 +16,7 @@ class NavigationBar extends StatefulWidget {
 class _NavigationBarState extends State<NavigationBar> {
   int _selectedIndex = 0;
 
-  void _onItemTapped(int index) {
+  void _onItemTapped(int index) async {
     setState(() {
       _selectedIndex = index;
     });
@@ -28,13 +31,22 @@ class _NavigationBarState extends State<NavigationBar> {
       case 1:
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) =>  HistoryPage()),
+          MaterialPageRoute(builder: (context) => HistoryPage()),
         );
         break;
       case 2:
-        Navigator.push(
+      // Eliminar la información de autenticación
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.clear();
+
+        // Limpiar la información del TokenManager
+        TokenManager.instance.clear();
+
+        // Redirigir al usuario a la pantalla de login
+        Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (context) => const LoginView()),
+              (Route<dynamic> route) => false,
         );
         break;
     }
