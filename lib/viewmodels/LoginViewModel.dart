@@ -27,7 +27,7 @@ class LoginViewModel extends ChangeNotifier {
     }
 
     try {
-      final isAuthenticated = await userService.authenticate(email, password).timeout(const Duration(seconds: 2));
+      final isAuthenticated = await userService.authenticate(email, password).timeout(const Duration(seconds: 10));
 
       isLoading = false;
 
