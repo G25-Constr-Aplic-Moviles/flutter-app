@@ -79,6 +79,7 @@ class LoginView extends StatelessWidget {
                         border: OutlineInputBorder(),
                         hintText: 'Enter your password',
                       ),
+                      obscureText: false,
                     ),
                     const SizedBox(height: 20),
                     SizedBox(
@@ -103,14 +104,6 @@ class LoginView extends StatelessWidget {
                         ),
                       ),
                     ),
-                    if (loginViewModel.errorMessage.isNotEmpty)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 2),
-                        child: Text(
-                          loginViewModel.errorMessage,
-                          style: const TextStyle(color: Colors.red),
-                        ),
-                      ),
                     const SizedBox(height: 10),
                     RichText(
                       text: TextSpan(
@@ -144,6 +137,5 @@ class LoginView extends StatelessWidget {
         ),
       ),
     );
-
   }
 }

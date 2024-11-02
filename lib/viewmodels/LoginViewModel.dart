@@ -10,7 +10,6 @@ class LoginViewModel extends ChangeNotifier {
   String email = '';
   String password = '';
   bool isLoading = false;
-  String errorMessage = '';
 
   LoginViewModel({required this.userService});
 
@@ -21,32 +20,93 @@ class LoginViewModel extends ChangeNotifier {
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.none) {
       isLoading = false;
-      errorMessage = 'No internet connection!';
-      notifyListeners();
+      _showErrorDialog(context, 'No internet connection!');
       return;
     }
 
     try {
       final isAuthenticated = await userService.authenticate(email, password).timeout(const Duration(seconds: 10));
-
       isLoading = false;
 
-      if (isAuthenticated==true) {
+      if (isAuthenticated == true) {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const RestaurantsListPage()),
         );
       } else {
-        errorMessage = 'Wrong Email/Password!';
+        _showErrorDialog(context, 'Wrong Email/Password!');
       }
     } on TimeoutException catch (_) {
       isLoading = false;
-      errorMessage = 'Request timed out. Please try again.';
+      _showErrorDialog(context, 'Request timed out. Please try again.');
     } catch (e) {
       isLoading = false;
-      errorMessage = 'Server Error. Retry!';
+      _showErrorDialog(context, 'Server Error. Retry!');
     }
 
+    notifyListeners();
+  }
+
+  void _showErrorDialog(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+          backgroundColor: Colors.white,
+          title: const Row(
+            children: [
+              Icon(
+                Icons.error_outline,
+                color: Colors.red,
+                size: 28,
+              ),
+              SizedBox(width: 10),
+              Text(
+                'Error',
+                style: TextStyle(
+                  color: Colors.red,
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          content: Text(
+            message,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              color: Colors.black87,
+              fontSize: 16,
+            ),
+          ),
+          actionsAlignment: MainAxisAlignment.center,
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              style: TextButton.styleFrom(
+                backgroundColor: Colors.red.shade100,
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+              ),
+              child: const Text(
+                'OK',
+                style: TextStyle(
+                  color: Colors.red,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void clear() {
+    email = '';
+    password = '';
     notifyListeners();
   }
 }

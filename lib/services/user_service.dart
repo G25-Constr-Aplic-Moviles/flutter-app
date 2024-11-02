@@ -38,7 +38,7 @@ class UserService implements UserRepository {
   }
 
   @override
-  Future<bool> register(String firstName, String lastName, String email, String password) async {
+  Future<bool?> register(String firstName, String lastName, String email, String password) async {
     final response = await http.post(
       Uri.parse(dotenv.env['USERS_API_URL']!),
       headers: <String, String>{
@@ -53,10 +53,7 @@ class UserService implements UserRepository {
     );
 
     if (response.statusCode == 201) {
-      final responseBody = jsonDecode(response.body);
-      TokenManager().setToken(responseBody['token']);
-      TokenManager().setUserId(responseBody['id']);
-      return true;
+      return await authenticate(email, password);
     } else {
       return false;
     }
