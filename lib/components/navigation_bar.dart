@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:test3/pages/history_page.dart';
 import 'package:test3/pages/login_page.dart';
 import 'package:test3/pages/restaurants_list.dart';
@@ -31,18 +30,12 @@ class _NavigationBarState extends State<NavigationBar> {
       case 1:
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => HistoryPage()),
+          MaterialPageRoute(builder: (context) => const HistoryPage()),
         );
         break;
       case 2:
-      // Eliminar la información de autenticación
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.clear();
+        await TokenManager.instance.clear();
 
-        // Limpiar la información del TokenManager
-        TokenManager.instance.clear();
-
-        // Redirigir al usuario a la pantalla de login
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (context) => const LoginView()),
@@ -51,6 +44,7 @@ class _NavigationBarState extends State<NavigationBar> {
         break;
     }
   }
+
 
   @override
   Widget build(BuildContext context) {

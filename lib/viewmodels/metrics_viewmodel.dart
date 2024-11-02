@@ -14,8 +14,8 @@ class MetricsViewModel extends ChangeNotifier {
 
   Future<void> sendMetrics(User user) async {
     // Capturar el tiempo que tomó cargar la vista
-    DateTime _endTime = DateTime.now();
-    double loadTime = _endTime.difference(_startTime).inMilliseconds / 1000;
+    DateTime endTime = DateTime.now();
+    double loadTime = endTime.difference(_startTime).inMilliseconds / 1000;
 
     // Obtener la URL del servicio desde el archivo .env
     String herokuApiUrl = dotenv.env['API_KEY_HEROKU'] ?? '';
@@ -24,7 +24,7 @@ class MetricsViewModel extends ChangeNotifier {
     Map<String, dynamic> data = {
       "plataforma": Platform.operatingSystem, // "Android", "iOS", etc.
       "tiempo": loadTime,
-      "timestamp": _endTime.toUtc().toIso8601String(),
+      "timestamp": endTime.toUtc().toIso8601String(),
       "userID": user.id,
     };
 

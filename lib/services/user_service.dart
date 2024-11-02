@@ -3,7 +3,6 @@ import 'package:http/http.dart' as http;
 import 'package:test3/models/token_manager.dart';
 import 'dart:convert';
 
-import 'package:test3/models/user.dart';
 import 'package:test3/repositories/user_repository.dart';
 
 class UserService implements UserRepository {

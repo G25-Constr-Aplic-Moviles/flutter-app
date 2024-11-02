@@ -10,7 +10,7 @@ class RestaurantCard extends StatelessWidget {
   final VoidCallback onTap;
 
   const RestaurantCard({
-    Key? key,
+    super.key,
     required this.imageUrl,
     required this.name,
     required this.averageRating,
@@ -18,7 +18,7 @@ class RestaurantCard extends StatelessWidget {
     required this.address,
     required this.restaurantType,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

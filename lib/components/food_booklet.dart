@@ -15,7 +15,7 @@ class FoodBooklet extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
       ),
-      margin: EdgeInsets.only(left: 25),
+      margin: const EdgeInsets.only(left: 25),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

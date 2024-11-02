@@ -21,7 +21,7 @@ class _DishPageState extends State<DishPage>{
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.pop(context); // Navigate back to the previous screen
           },
@@ -31,7 +31,7 @@ class _DishPageState extends State<DishPage>{
         elevation: 0,
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
@@ -56,30 +56,30 @@ class _DishPageState extends State<DishPage>{
             ),
 
             Text(
-              '\$' + food.price.toString(),
+              '\$${food.price}',
               style: const TextStyle(
                     fontSize: 30, 
               ),
             ),
 
-            Text(
+            const Text(
               'Un plato clásico elevado a nuevas alturas. Arroz jazmín perfectamente cocido, impregnado con un caldo de carne rico y sabroso, acompañado de jugosos trozos de lomo de res salteados al punto perfecto. Se combina con pimientos asados, cebolla caramelizada y un toque de ajo para un sabor profundo y envolvente.',
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 20,
                 height: 1.2,
               ),
               textAlign: TextAlign.justify,
             ),
 
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
 
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
 
-                Text(
+                const Text(
                   'Experiencias',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 25
                   ),
@@ -118,7 +118,7 @@ class _DishPageState extends State<DishPage>{
           ],
         ),
       ),
-    bottomNavigationBar: customNavBar.NavigationBar(),
+    bottomNavigationBar: const customNavBar.NavigationBar(),
     );
   }
 }

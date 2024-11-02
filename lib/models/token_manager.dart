@@ -1,7 +1,7 @@
+import 'package:shared_preferences/shared_preferences.dart';
+
 class TokenManager {
   static final TokenManager _instance = TokenManager._internal();
-  String? _token;
-  String? _userId;
 
   factory TokenManager() {
     return _instance;
@@ -11,19 +11,28 @@ class TokenManager {
 
   static TokenManager get instance => _instance;
 
-  String? get token => _token;
-  String? get userId => _userId;
-
-  void setToken(String token) {
-    _token = token;
+  Future<String?> get token async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('token');
   }
 
-  void setUserId(String userId) {
-    _userId = userId;
+  Future<String?> get userId async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('userId');
   }
 
-  void clear() {
-    _token = null;
-    _userId = null;
+  Future<void> setToken(String token) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('token', token);
+  }
+
+  Future<void> setUserId(String userId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('userId', userId);
+  }
+
+  Future<void> clear() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
   }
 }
