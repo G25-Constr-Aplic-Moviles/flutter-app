@@ -16,7 +16,8 @@ class UserService implements UserRepository {
 
   @override
   Future<bool?> authenticate(String email, String password) async {
-
+    if (email=="" || password==""){
+      return false;}
     final response = await http.post(
       Uri.parse('${dotenv.env['USERS_API_URL']!}/auth'),
       headers: <String, String>{

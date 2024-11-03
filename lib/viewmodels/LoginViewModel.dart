@@ -19,30 +19,42 @@ class LoginViewModel extends ChangeNotifier {
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.none) {
       isLoading = false;
+      notifyListeners();
       _showErrorDialog(context, 'No internet connection!');
       return;
     }
-
-    try {
-      final isAuthenticated = await userService.authenticate(email, password).timeout(const Duration(seconds: 4));
+    if (email.isEmpty || password.isEmpty) {
       isLoading = false;
+      notifyListeners();
+      _showErrorDialog(context, 'Empty fields are not valid!');
+      return;
+    } else {
+      try {
+        final isAuthenticated = await userService.authenticate(email, password)
+            .timeout(const Duration(seconds: 4));
+        isLoading = false;
+        notifyListeners();
 
-      if (isAuthenticated == true) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const RestaurantsListPage()),
-        );
-      } else {
-        _showErrorDialog(context, 'Wrong Email/Password!');
+        if (isAuthenticated == true) {
+          clear();
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const RestaurantsListPage()),
+          );
+        } else {
+          _showErrorDialog(context, 'Wrong Email/Password!');
+        }
+      } on TimeoutException catch (_) {
+        isLoading = false;
+        notifyListeners();
+        _showErrorDialog(context, 'Request timed out. Please try again.');
+      } catch (e) {
+        isLoading = false;
+        notifyListeners();
+        _showErrorDialog(context, 'Server Error. Retry!');
       }
-    } on TimeoutException catch (_) {
-      isLoading = false;
-      _showErrorDialog(context, 'Request timed out. Please try again.');
-    } catch (e) {
-      isLoading = false;
-      _showErrorDialog(context, 'Server Error. Retry!');
     }
-
     clear();
   }
 
@@ -106,6 +118,5 @@ class LoginViewModel extends ChangeNotifier {
   void clear() {
     email = '';
     password = '';
-    notifyListeners();
   }
 }
