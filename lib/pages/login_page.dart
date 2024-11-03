@@ -79,7 +79,8 @@ class LoginView extends StatelessWidget {
                         border: OutlineInputBorder(),
                         hintText: 'Enter your password',
                       ),
-                      obscureText: false,
+                      obscureText: true,
+                      obscuringCharacter: '*',
                     ),
                     const SizedBox(height: 20),
                     SizedBox(

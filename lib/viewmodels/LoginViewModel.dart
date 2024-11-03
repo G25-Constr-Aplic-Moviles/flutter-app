@@ -55,7 +55,6 @@ class LoginViewModel extends ChangeNotifier {
         _showErrorDialog(context, 'Server Error. Retry!');
       }
     }
-    clear();
   }
 
   void _showErrorDialog(BuildContext context, String message) {
