@@ -35,7 +35,6 @@ class _NavigationBarState extends State<NavigationBar> {
         break;
       case 2:
         await TokenManager.instance.clear();
-
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (context) => const LoginView()),

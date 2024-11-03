@@ -6,7 +6,6 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 
 class LoginViewModel extends ChangeNotifier {
   final UserService userService;
-
   String email = '';
   String password = '';
   bool isLoading = false;
@@ -25,7 +24,7 @@ class LoginViewModel extends ChangeNotifier {
     }
 
     try {
-      final isAuthenticated = await userService.authenticate(email, password).timeout(const Duration(seconds: 10));
+      final isAuthenticated = await userService.authenticate(email, password).timeout(const Duration(seconds: 4));
       isLoading = false;
 
       if (isAuthenticated == true) {
@@ -44,7 +43,7 @@ class LoginViewModel extends ChangeNotifier {
       _showErrorDialog(context, 'Server Error. Retry!');
     }
 
-    notifyListeners();
+    clear();
   }
 
   void _showErrorDialog(BuildContext context, String message) {
