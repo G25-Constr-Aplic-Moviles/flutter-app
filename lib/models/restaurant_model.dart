@@ -21,6 +21,7 @@ class Restaurant {
     required this.imageUrl,
   });
 
+  // Factory constructor para crear una instancia de Restaurant desde JSON
   factory Restaurant.fromJson(Map<String, dynamic> json) {
     return Restaurant(
       name: json['name'],
@@ -34,6 +35,36 @@ class Restaurant {
       averageRating: json['average_rating'] is int
           ? (json['average_rating'] as int).toDouble()
           : double.parse(json['average_rating'].toString()),
+    );
+  }
+
+  // Método para convertir una instancia de Restaurant a un mapa
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'name': name,
+      'cuisineType': cuisineType,
+      'totalReviews': totalReviews,
+      'imageUrl': imageUrl,
+      'address': address,
+      'averageRating': averageRating,
+      'latitude': latitude,
+      'longitude': longitude,
+    };
+  }
+
+  // Método para crear una instancia de Restaurant desde un mapa
+  factory Restaurant.fromMap(Map<String, dynamic> map) {
+    return Restaurant(
+      id: map['id'],
+      name: map['name'],
+      cuisineType: map['cuisineType'],
+      totalReviews: map['totalReviews'],
+      imageUrl: map['imageUrl'],
+      address: map['address'],
+      averageRating: map['averageRating'],
+      latitude: map['latitude'],
+      longitude: map['longitude'],
     );
   }
 }
