@@ -12,12 +12,19 @@ import 'package:test3/viewmodels/route_view_model.dart';
 import 'package:test3/viewmodels/LoginViewModel.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:io';
+import 'dart:async';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:path_provider/path_provider.dart';
 
 import 'models/token_manager.dart';
 
 void main() async {
   await dotenv.load(fileName: '.env');
   HttpOverrides.global = MyHttpOverrides();
+
+  // Captura el snapshot inicial del mapa al iniciar la aplicación
+  await captureInitialMapSnapshot();
+
   runApp(const MyApp());
 }
 
@@ -27,6 +34,33 @@ class MyHttpOverrides extends HttpOverrides {
     return super.createHttpClient(context)
       ..badCertificateCallback =
           (X509Certificate cert, String host, int port) => true;
+  }
+}
+
+Future<void> captureInitialMapSnapshot() async {
+  final Completer<GoogleMapController> _controller = Completer();
+
+  // Define una ubicación inicial y la posición de la cámara (ajusta según tus necesidades)
+  final CameraPosition initialPosition = CameraPosition(
+    target: LatLng(0.0, 0.0), // Cambia a la ubicación predeterminada o actual del usuario
+    zoom: 12.0,
+  );
+
+  // Inicializa el mapa y toma el snapshot
+  final GoogleMap map = GoogleMap(
+    initialCameraPosition: initialPosition,
+    onMapCreated: (GoogleMapController controller) {
+      _controller.complete(controller);
+    },
+  );
+
+  GoogleMapController controller = await _controller.future;
+  final imageBytes = await controller.takeSnapshot();
+  if (imageBytes != null) {
+    final directory = await getApplicationDocumentsDirectory();
+    final file = File('${directory.path}/initial_map_snapshot.png');
+    await file.writeAsBytes(imageBytes);
+    print("Initial map snapshot saved successfully.");
   }
 }
 

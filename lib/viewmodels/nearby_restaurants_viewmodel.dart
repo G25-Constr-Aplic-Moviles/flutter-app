@@ -1,6 +1,9 @@
+import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
+import 'package:path_provider/path_provider.dart';
 import '../models/restaurant_model.dart';
 import '../services/api_service.dart';
 
@@ -32,7 +35,7 @@ class NearbyRestaurantsViewModel extends ChangeNotifier {
 
   Future<void> fetchNearbyRestaurants() async {
     try {
-      if (_currentLocation == null) return; // Ensure location is available
+      if (_currentLocation == null) return;
 
       List<dynamic> data = await _apiService.fetchRestaurants();
       List<Restaurant> allRestaurants = data.map((item) => Restaurant.fromJson(item)).toList();
@@ -44,19 +47,19 @@ class NearbyRestaurantsViewModel extends ChangeNotifier {
           restaurant.latitude,
           restaurant.longitude,
         );
-
-        // Filter restaurants within 1 km range
         return distance <= 1.0;
       }).toList();
 
+      await _saveMarkersToLocalCache(_restaurants.take(20).toList());
       notifyListeners();
     } catch (e) {
       print('Error fetching restaurants: $e');
+      await loadMarkersFromLocalCache();
     }
   }
 
   double _calculateDistance(double lat1, double lon1, double lat2, double lon2) {
-    const int radiusOfEarth = 6371; // Radius of Earth in km
+    const int radiusOfEarth = 6371;
     double dLat = _degreeToRadian(lat2 - lat1);
     double dLon = _degreeToRadian(lon2 - lon1);
     double a = sin(dLat / 2) * sin(dLat / 2) +
@@ -68,5 +71,32 @@ class NearbyRestaurantsViewModel extends ChangeNotifier {
 
   double _degreeToRadian(double degree) {
     return degree * pi / 180;
+  }
+
+  Future<File> _getMarkersFile() async {
+    final directory = await getApplicationDocumentsDirectory();
+    return File('${directory.path}/restaurant_markers.json');
+  }
+
+  Future<void> _saveMarkersToLocalCache(List<Restaurant> markers) async {
+    final file = await _getMarkersFile();
+    final List<Map<String, dynamic>> jsonMarkers = markers.map((m) => m.toMap()).toList();
+    await file.writeAsString(json.encode(jsonMarkers));
+    print("Markers saved to local cache.");
+  }
+
+  Future<void> loadMarkersFromLocalCache() async {
+    try {
+      final file = await _getMarkersFile();
+      if (await file.exists()) {
+        final contents = await file.readAsString();
+        final List<dynamic> jsonList = json.decode(contents);
+        _restaurants = jsonList.map((json) => Restaurant.fromMap(json)).toList();
+        notifyListeners();
+        print("Markers loaded from local cache.");
+      }
+    } catch (e) {
+      print("Error loading markers from local cache: $e");
+    }
   }
 }

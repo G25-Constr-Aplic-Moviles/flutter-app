@@ -3,7 +3,9 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:path_provider/path_provider.dart';
 import '../viewmodels/nearby_restaurants_viewmodel.dart';
 import '../models/token_manager.dart';
 
@@ -22,32 +24,43 @@ class _NearbyRestaurantsViewState extends State<NearbyRestaurantsView> {
   @override
   void initState() {
     super.initState();
-    _startTime = DateTime.now(); // Capture the start time
+    _startTime = DateTime.now();
 
-    // Get location and then restaurants from the ViewModel
     final viewModel = Provider.of<NearbyRestaurantsViewModel>(context, listen: false);
 
-    // Await getCurrentLocation and then fetch restaurants
     viewModel.getCurrentLocation().then((_) {
       if (viewModel.currentLocation != null) {
-        // Fetch restaurants after location is available
         viewModel.fetchNearbyRestaurants().then((_) {
-          _sendAnalytics(); // Send metrics after restaurants are loaded
+          _sendAnalytics();
         });
+      } else {
+        viewModel.loadMarkersFromLocalCache();
       }
     });
   }
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
+    cacheMapSnapshot(controller);
+  }
+
+  Future<void> cacheMapSnapshot(GoogleMapController controller) async {
+    try {
+      final imageBytes = await controller.takeSnapshot();
+      if (imageBytes != null) {
+        final directory = await getApplicationDocumentsDirectory();
+        final file = File('${directory.path}/map_snapshot.png');
+        await file.writeAsBytes(imageBytes);
+        print("Map snapshot saved successfully.");
+      }
+    } catch (e) {
+      print("Failed to save map snapshot: $e");
+    }
   }
 
   Future<void> _sendAnalytics() async {
-    // Capture the time it took to load the view
     DateTime endTime = DateTime.now();
     double loadTime = endTime.difference(_startTime).inMilliseconds / 1000;
-
-    // Obtain userId from TokenManager
     String? userId = await TokenManager().userId;
 
     if (userId == null) {
@@ -55,10 +68,7 @@ class _NearbyRestaurantsViewState extends State<NearbyRestaurantsView> {
       return;
     }
 
-    // Get service URL from .env file
     String? herokuApiUrl = '$_analitycsURL/add_time';
-
-    // Data to send
     Map<String, dynamic> data = {
       "plataforma": "Flutter",
       "tiempo": loadTime,
@@ -66,13 +76,10 @@ class _NearbyRestaurantsViewState extends State<NearbyRestaurantsView> {
       "userID": userId,
     };
 
-    // Send data to Heroku service
     try {
       final response = await http.post(
         Uri.parse(herokuApiUrl),
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: {'Content-Type': 'application/json'},
         body: jsonEncode(data),
       );
 
@@ -100,7 +107,7 @@ class _NearbyRestaurantsViewState extends State<NearbyRestaurantsView> {
       ),
       body: Consumer<NearbyRestaurantsViewModel>(
         builder: (context, viewModel, child) {
-          if (viewModel.currentLocation == null) {
+          if (viewModel.currentLocation == null && viewModel.restaurants.isEmpty) {
             return const Center(child: CircularProgressIndicator());
           }
 
@@ -118,7 +125,9 @@ class _NearbyRestaurantsViewState extends State<NearbyRestaurantsView> {
           return GoogleMap(
             onMapCreated: _onMapCreated,
             initialCameraPosition: CameraPosition(
-              target: LatLng(viewModel.currentLocation!.latitude!, viewModel.currentLocation!.longitude!),
+              target: viewModel.currentLocation != null
+                  ? LatLng(viewModel.currentLocation!.latitude!, viewModel.currentLocation!.longitude!)
+                  : LatLng(0, 0),
               zoom: 15.0,
             ),
             markers: markers,
