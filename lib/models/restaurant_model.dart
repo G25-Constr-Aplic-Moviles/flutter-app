@@ -36,4 +36,18 @@ class Restaurant {
           : double.parse(json['average_rating'].toString()),
     );
   }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'name': name,
+      'cuisineType': cuisineType,
+      'totalReviews': totalReviews,
+      'imageUrl': imageUrl,
+      'address': address,
+      'averageRating': averageRating,
+      'latitude': latitude,
+      'longitude': longitude,
+    };
+  }
 }
