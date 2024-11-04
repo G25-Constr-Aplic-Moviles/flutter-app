@@ -4,7 +4,6 @@ import 'package:http/http.dart' as http;
 import 'package:test3/models/restaurant_model.dart';
 import 'package:test3/repositories/restaurant_repository.dart';
 
-import '../models/token_manager.dart';
 
 class ApiService extends RestaurantRepository{
   final String? _baseUrl = dotenv.env['RESTAURANT_API_URL'];

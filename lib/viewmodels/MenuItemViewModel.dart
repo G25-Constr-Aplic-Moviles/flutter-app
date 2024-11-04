@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:test3/models/food.dart';
-import '../models/restaurant_model.dart';
 import '../services/api_service.dart';
 
 class MenuItemViewModel extends ChangeNotifier {

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 class AddReviewScreen extends StatefulWidget {
+  const AddReviewScreen({super.key});
+
   @override
   _AddReviewScreenState createState() => _AddReviewScreenState();
 }
@@ -14,12 +16,12 @@ class _AddReviewScreenState extends State<AddReviewScreen> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.pop(context); // Navigate back to the previous screen
           },
         ),
-        title: Text('Agregar reseña'),
+        title: const Text('Agregar reseña'),
         backgroundColor: Colors.white,
         elevation: 0,
       ),
@@ -29,12 +31,12 @@ class _AddReviewScreenState extends State<AddReviewScreen> {
           children: [
             Expanded(
               child: Container(
-                padding: EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(16.0),
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.black),
                   borderRadius: BorderRadius.circular(8.0),
                 ),
-                child: TextField(
+                child: const TextField(
                   maxLines: null,
                   expands: true,
                   decoration: InputDecoration(
@@ -44,15 +46,15 @@ class _AddReviewScreenState extends State<AddReviewScreen> {
                 ),
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             RatingBar.builder(
               initialRating: 0,
               minRating: 1,
               direction: Axis.horizontal,
               allowHalfRating: true,
               itemCount: 5,
-              itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-              itemBuilder: (context, _) => Icon(
+              itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
+              itemBuilder: (context, _) => const Icon(
                 Icons.star,
                 color: Colors.amber,
               ),
@@ -62,7 +64,7 @@ class _AddReviewScreenState extends State<AddReviewScreen> {
                 });
               },
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
                 // Handle add review action
@@ -70,12 +72,12 @@ class _AddReviewScreenState extends State<AddReviewScreen> {
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green.shade200,
-                padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),
               ),
-              child: Text('Agregar', style: TextStyle(color: Colors.black)),
+              child: const Text('Agregar', style: TextStyle(color: Colors.black)),
             ),
           ],
         ),

@@ -1,10 +1,7 @@
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import '../models/restaurant_model.dart';
 import '../services/api_service.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:http/http.dart' as http;
 
 class RestaurantsListViewModel extends ChangeNotifier {
   List<Restaurant> _restaurants = [];

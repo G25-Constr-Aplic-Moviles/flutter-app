@@ -28,7 +28,7 @@ class _FullMenuPage extends State<FullMenuPage> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.pop(context); // Navigate back to the previous screen
           },
@@ -45,20 +45,20 @@ class _FullMenuPage extends State<FullMenuPage> {
               children: [
                 Image.asset('assets/images/yamato_sushi.png'),
                 const SizedBox(height: 25),
-                Text(
+                const Text(
                   "YAMATO SUSHI",
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 30, 
                   ),
                 ),
 
-                Row(
+                const Row(
                   children: [
                     Text(
                           "Menu",
                           textAlign: TextAlign.left,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 30, 
                           ),
@@ -80,7 +80,7 @@ class _FullMenuPage extends State<FullMenuPage> {
               ],
             ), 
           ),
-          bottomNavigationBar: customNavBar.NavigationBar(),
+          bottomNavigationBar: const customNavBar.NavigationBar(),
     );
   }
 }

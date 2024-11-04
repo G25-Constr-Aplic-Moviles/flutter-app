@@ -4,11 +4,12 @@ import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'dart:io' show Platform;
 import '../viewmodels/nearby_restaurants_viewmodel.dart';
 import '../models/token_manager.dart';
 
 class NearbyRestaurantsView extends StatefulWidget {
+  const NearbyRestaurantsView({super.key});
+
   @override
   _NearbyRestaurantsViewState createState() => _NearbyRestaurantsViewState();
 }
@@ -16,6 +17,7 @@ class NearbyRestaurantsView extends StatefulWidget {
 class _NearbyRestaurantsViewState extends State<NearbyRestaurantsView> {
   late GoogleMapController mapController;
   late DateTime _startTime;
+  final String? _analitycsURL= dotenv.env['API_KEY_HEROKU'];
 
   @override
   void initState() {
@@ -42,11 +44,11 @@ class _NearbyRestaurantsViewState extends State<NearbyRestaurantsView> {
 
   Future<void> _sendAnalytics() async {
     // Capture the time it took to load the view
-    DateTime _endTime = DateTime.now();
-    double loadTime = _endTime.difference(_startTime).inMilliseconds / 1000;
+    DateTime endTime = DateTime.now();
+    double loadTime = endTime.difference(_startTime).inMilliseconds / 1000;
 
     // Obtain userId from TokenManager
-    String? userId = TokenManager().userId;
+    String? userId = await TokenManager().userId;
 
     if (userId == null) {
       print("Error: User ID not found");
@@ -54,13 +56,13 @@ class _NearbyRestaurantsViewState extends State<NearbyRestaurantsView> {
     }
 
     // Get service URL from .env file
-    String herokuApiUrl = "https://analyticservice-553a4e950222.herokuapp.com/add_time";
+    String? herokuApiUrl = '$_analitycsURL/add_time';
 
     // Data to send
     Map<String, dynamic> data = {
-      "plataforma": "Flutter", // "Android", "iOS", "Windows", etc.
+      "plataforma": "Flutter",
       "tiempo": loadTime,
-      "timestamp": _endTime.toUtc().toIso8601String(),
+      "timestamp": endTime.toUtc().toIso8601String(),
       "userID": userId,
     };
 

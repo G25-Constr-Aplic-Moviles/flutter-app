@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:test3/components/food_booklet.dart';
-import 'package:test3/models/food.dart';
 import 'package:test3/models/restaurant_model.dart';
 import 'package:test3/models/review.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:test3/components/navigation_bar.dart' as customNavBar;
 import 'package:test3/pages/full_menu_page.dart';
 import 'package:test3/viewmodels/MenuItemViewModel.dart';
-import 'package:test3/viewmodels/restaurants_list_viewmodel.dart';
 import 'package:provider/provider.dart';
 
 class RestaurantPage extends StatefulWidget {
@@ -37,7 +35,7 @@ class _RestaurantPageState extends State<RestaurantPage>{
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.pop(context); // Navigate back to the previous screen
           },
@@ -64,11 +62,11 @@ class _RestaurantPageState extends State<RestaurantPage>{
           
               Row(
                 children: [
-                  Expanded(
+                  const Expanded(
                     child: Text(
                                 "Menu",
                                 textAlign: TextAlign.left,
-                                style: const TextStyle(
+                                style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 30, 
                                 ),
@@ -80,13 +78,13 @@ class _RestaurantPageState extends State<RestaurantPage>{
                       onTap: () {
                         Navigator.push(
                           context, 
-                          MaterialPageRoute(builder: (context) => FullMenuPage()),
+                          MaterialPageRoute(builder: (context) => const FullMenuPage()),
                           );
                       },
-                      child: Text(
+                      child: const Text(
                                   "Menu completo",
                                   textAlign: TextAlign.right,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 30, 
                                     color: Color.fromARGB(255, 5, 82, 215)
@@ -112,13 +110,13 @@ class _RestaurantPageState extends State<RestaurantPage>{
                 ),
               ),
         
-              Row(
+              const Row(
                 children: [
                   Expanded(
                     child: Text(
                               "Reseñas (4.5)",
                               textAlign: TextAlign.left,
-                              style: const TextStyle(
+                              style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 30, 
                               ),
@@ -129,7 +127,7 @@ class _RestaurantPageState extends State<RestaurantPage>{
                   Text(
                               "Ver todas",
                               textAlign: TextAlign.right,
-                              style: const TextStyle(
+                              style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 30, 
                               ),
@@ -178,7 +176,7 @@ class _RestaurantPageState extends State<RestaurantPage>{
                           padding: const EdgeInsets.only(left:8.0),
                           child: RatingBarIndicator(
                             rating: reviewPreview.numberStars,
-                            itemBuilder: (context, index) => Icon(
+                            itemBuilder: (context, index) => const Icon(
                               Icons.star,
                               color: Colors.black,
                             ),
@@ -215,12 +213,12 @@ class _RestaurantPageState extends State<RestaurantPage>{
         
               const SizedBox(height: 25),
         
-              Row(
+              const Row(
                 children: [
                   Text(
                       "Ubicación",
                       textAlign: TextAlign.left,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 30, 
                       ),
@@ -241,7 +239,7 @@ class _RestaurantPageState extends State<RestaurantPage>{
             ],
           ),),
       ),
-      bottomNavigationBar: customNavBar.NavigationBar(),
+      bottomNavigationBar: const customNavBar.NavigationBar(),
     );
   }
 }

@@ -1,7 +1,7 @@
+import 'package:shared_preferences/shared_preferences.dart';
+
 class TokenManager {
   static final TokenManager _instance = TokenManager._internal();
-  String? _token;
-  String? _userId;
 
   factory TokenManager() {
     return _instance;
@@ -11,19 +11,36 @@ class TokenManager {
 
   static TokenManager get instance => _instance;
 
-  String? get token => _token;
-  String? get userId => _userId;
-
-  void setToken(String token) {
-    _token = token;
+  Future<String?> get token async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('token');
   }
 
-  void setUserId(String userId) {
-    _userId = userId;
+  Future<String?> get userId async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('userId');
   }
 
-  void clear() {
-    _token = null;
-    _userId = null;
+  Future<DateTime?> get expireAt async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? expireAtString = prefs.getString('expireAt');
+    if (expireAtString != null) {
+      return DateTime.parse(expireAtString);
+    }
+    return null;
+  }
+
+  Future<void> setToken(String token, String userId, String expireAt) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('token', token);
+    await prefs.setString('userId', userId);
+    await prefs.setString('expireAt', expireAt);
+  }
+
+  Future<void> clear() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.remove('token');
+    await prefs.remove('userId');
+    await prefs.remove('expireAt');
   }
 }

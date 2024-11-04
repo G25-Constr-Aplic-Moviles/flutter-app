@@ -5,7 +5,6 @@ import '../viewmodels/restaurants_list_viewmodel.dart';
 import '../viewmodels/route_view_model.dart';
 import '../components/navigation_bar.dart' as custom_nav_bar;
 import '../components/restaurant_card.dart';
-import 'route_view.dart';
 import 'nearby__restaurants_view.dart';
 import 'restaurant_page.dart';
 
@@ -45,7 +44,7 @@ class _RestaurantsListPageState extends State<RestaurantsListPage> {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => NearbyRestaurantsView()),
+              MaterialPageRoute(builder: (context) => const NearbyRestaurantsView()),
             );
           },
         ),
@@ -91,8 +90,8 @@ class _RestaurantsListPageState extends State<RestaurantsListPage> {
                 SizedBox(
                   height: 48,
                   child: ElevatedButton(
-                    onPressed: () {
-                      final userId = TokenManager().userId;
+                    onPressed: () async {
+                      final userId = await TokenManager().userId;
                       if(userId != null){
                         restaurantsViewModel.fetchRecommendedRestaurants(userId);
                       } else {

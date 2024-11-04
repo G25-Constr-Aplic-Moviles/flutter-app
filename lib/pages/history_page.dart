@@ -5,6 +5,8 @@ import 'package:test3/services/api_service.dart';
 import 'package:test3/models/restaurant_model.dart';
 
 class HistoryPage extends StatefulWidget {
+  const HistoryPage({super.key});
+
   @override
   _HistoryPageState createState() => _HistoryPageState();
 }
@@ -88,7 +90,7 @@ class _HistoryPageState extends State<HistoryPage> {
       filtered = filtered.where((entry) => entry['restaurant_id'] == leastVisitedId).toList();
     } else if (_filterOption == 'Visited This Week') {
       DateTime now = DateTime.now();
-      DateTime oneWeekAgo = now.subtract(Duration(days: 7));
+      DateTime oneWeekAgo = now.subtract(const Duration(days: 7));
       filtered = filtered.where((entry) {
         var visitDate = DateFormat("EEE, dd MMM yyyy HH:mm:ss 'GMT'").parseUTC(entry['timestamp']).toLocal();
         return visitDate.isAfter(oneWeekAgo) && visitDate.isBefore(now);
@@ -106,7 +108,7 @@ class _HistoryPageState extends State<HistoryPage> {
 
     // Calcular el número de visitas en la última semana
     DateTime now = DateTime.now();
-    DateTime oneWeekAgo = now.subtract(Duration(days: 7));
+    DateTime oneWeekAgo = now.subtract(const Duration(days: 7));
     int visitsThisWeek = restaurantHistory.where((entry) {
       var visitDate = DateFormat("EEE, dd MMM yyyy HH:mm:ss 'GMT'").parseUTC(entry['timestamp']).toLocal();
       return visitDate.isAfter(oneWeekAgo) && visitDate.isBefore(now);
@@ -118,8 +120,8 @@ class _HistoryPageState extends State<HistoryPage> {
         return AlertDialog(
           title: Center(child: Text('History of $restaurantName')),
           content: restaurantHistory.isEmpty
-              ? Text('No entries found for this restaurant.')
-              : Container(
+              ? const Text('No entries found for this restaurant.')
+              : SizedBox(
             width: double.maxFinite,
             height: 300.0, // Set a fixed height for the scrollable area
             child: Column(
@@ -129,7 +131,7 @@ class _HistoryPageState extends State<HistoryPage> {
                   alignment: Alignment.centerLeft,
                   child: Text('Total visits: ${restaurantHistory.length} - This week: $visitsThisWeek'),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 Expanded(
                   child: ListView.builder(
                     shrinkWrap: true,
@@ -138,16 +140,16 @@ class _HistoryPageState extends State<HistoryPage> {
                       var entry = restaurantHistory[index];
                       var visitDate = DateFormat("EEE, dd MMM yyyy HH:mm:ss 'GMT'").parseUTC(entry['timestamp']).toLocal();
                       return Card(
-                        margin: EdgeInsets.symmetric(vertical: 4.0),
+                        margin: const EdgeInsets.symmetric(vertical: 4.0),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10.0),
                         ),
                         elevation: 3,
                         child: ListTile(
-                          leading: Icon(Icons.calendar_today, color: Colors.blue),
+                          leading: const Icon(Icons.calendar_today, color: Colors.blue),
                           title: Text(
                             'Visited on ${visitDate.day}/${visitDate.month}/${visitDate.year}',
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                            style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ),
                       );
@@ -176,7 +178,7 @@ class _HistoryPageState extends State<HistoryPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromRGBO(255, 82, 71, 1),
-        title: Text('Visit History'),
+        title: const Text('Visit History'),
       ),
       body: Column(
         children: [
@@ -192,9 +194,9 @@ class _HistoryPageState extends State<HistoryPage> {
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8.0),
                       ),
-                      prefixIcon: Icon(Icons.search),
+                      prefixIcon: const Icon(Icons.search),
                       suffixIcon: PopupMenuButton<String>(
-                        icon: Icon(Icons.filter_list),
+                        icon: const Icon(Icons.filter_list),
                         onSelected: (String value) {
                           setState(() {
                             _filterOption = value;
@@ -219,12 +221,12 @@ class _HistoryPageState extends State<HistoryPage> {
           ),
           Expanded(
             child: _isLoading
-                ? Center(child: CircularProgressIndicator())
+                ? const Center(child: CircularProgressIndicator())
                 : _filteredHistory.isEmpty
                 ? Center(
               child: _searchQuery.isEmpty
-                  ? Text('No entries found.')
-                  : Text('No restaurants match your search.'),
+                  ? const Text('No entries found.')
+                  : const Text('No restaurants match your search.'),
             )
                 : ListView.builder(
               itemCount: _filteredHistory.length,
@@ -235,19 +237,19 @@ class _HistoryPageState extends State<HistoryPage> {
                 var visitDate = DateFormat("EEE, dd MMM yyyy HH:mm:ss 'GMT'").parseUTC(entry['timestamp']).toLocal();
 
                 return Card(
-                  margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                  margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10.0),
                   ),
                   elevation: 5,
                   child: ListTile(
-                    leading: Icon(Icons.restaurant, color: Colors.blue),
+                    leading: const Icon(Icons.restaurant, color: Colors.blue),
                     title: Text(
                       restaurantName,
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                     subtitle: Text('Visited on ${visitDate.day}/${visitDate.month}/${visitDate.year}'),
-                    trailing: Icon(Icons.arrow_forward_ios, color: Colors.blue),
+                    trailing: const Icon(Icons.arrow_forward_ios, color: Colors.blue),
                     onTap: () => _showRestaurantHistory(entry['restaurant_id']),
                   ),
                 );

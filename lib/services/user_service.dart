@@ -3,7 +3,6 @@ import 'package:http/http.dart' as http;
 import 'package:test3/models/token_manager.dart';
 import 'dart:convert';
 
-import 'package:test3/models/user.dart';
 import 'package:test3/repositories/user_repository.dart';
 
 class UserService implements UserRepository {
@@ -17,6 +16,8 @@ class UserService implements UserRepository {
 
   @override
   Future<bool?> authenticate(String email, String password) async {
+    if (email=="" || password==""){
+      return false;}
     final response = await http.post(
       Uri.parse('${dotenv.env['USERS_API_URL']!}/auth'),
       headers: <String, String>{
@@ -30,8 +31,7 @@ class UserService implements UserRepository {
 
     if (response.statusCode == 200) {
       final responseBody = jsonDecode(response.body);
-      TokenManager().setToken(responseBody['token']);
-      TokenManager().setUserId(responseBody['id']);
+      TokenManager().setToken(responseBody['token'], responseBody['token'], responseBody['expireAt']);
       return true;
     } else {
       return false;
@@ -39,7 +39,7 @@ class UserService implements UserRepository {
   }
 
   @override
-  Future<bool> register(String firstName, String lastName, String email, String password) async {
+  Future<bool?> register(String firstName, String lastName, String email, String password) async {
     final response = await http.post(
       Uri.parse(dotenv.env['USERS_API_URL']!),
       headers: <String, String>{
@@ -54,10 +54,7 @@ class UserService implements UserRepository {
     );
 
     if (response.statusCode == 201) {
-      final responseBody = jsonDecode(response.body);
-      TokenManager().setToken(responseBody['token']);
-      TokenManager().setUserId(responseBody['id']);
-      return true;
+      return await authenticate(email, password);
     } else {
       return false;
     }
