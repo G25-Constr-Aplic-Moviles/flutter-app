@@ -8,6 +8,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:path_provider/path_provider.dart';
 import '../viewmodels/nearby_restaurants_viewmodel.dart';
 import '../models/token_manager.dart';
+import 'restaurants_list.dart';
 
 class NearbyRestaurantsView extends StatefulWidget {
   const NearbyRestaurantsView({super.key});
@@ -28,23 +29,33 @@ class _NearbyRestaurantsViewState extends State<NearbyRestaurantsView> {
 
     final viewModel = Provider.of<NearbyRestaurantsViewModel>(context, listen: false);
 
-    viewModel.getCurrentLocation().then((_) {
+    viewModel.getCurrentLocation().then((_) async {
       if (viewModel.currentLocation != null) {
-        viewModel.fetchNearbyRestaurants().then((_) {
+        await viewModel.fetchNearbyRestaurants();
+        if (viewModel.restaurants.isEmpty) {
+          await viewModel.loadMarkersFromLocalCache();
+          if (viewModel.restaurants.isEmpty) {
+            _showConnectionErrorAndRedirect();
+          }
+        } else {
           _sendAnalytics();
-        });
+        }
       } else {
-        viewModel.loadMarkersFromLocalCache();
+        await viewModel.loadMarkersFromLocalCache();
+        if (viewModel.restaurants.isEmpty) {
+          _showConnectionErrorAndRedirect();
+        }
       }
     });
   }
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
-    cacheMapSnapshot(controller);
+    // Captura el snapshot al cargar el mapa si es necesario para uso offline
+    _cacheMapSnapshot(controller);
   }
 
-  Future<void> cacheMapSnapshot(GoogleMapController controller) async {
+  Future<void> _cacheMapSnapshot(GoogleMapController controller) async {
     try {
       final imageBytes = await controller.takeSnapshot();
       if (imageBytes != null) {
@@ -91,6 +102,29 @@ class _NearbyRestaurantsViewState extends State<NearbyRestaurantsView> {
     } catch (e) {
       print("Error connecting to Heroku service: $e");
     }
+  }
+
+  void _showConnectionErrorAndRedirect() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Internet Connection Error"),
+          content: const Text("Please check your Internet Connection and try again"),
+          actions: [
+            TextButton(
+              child: const Text("OK"),
+              onPressed: () {
+                Navigator.of(context).pop(); // Cierra el diálogo
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (context) => const RestaurantsListPage()),
+                ); // Redirige a la lista de restaurantes
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override

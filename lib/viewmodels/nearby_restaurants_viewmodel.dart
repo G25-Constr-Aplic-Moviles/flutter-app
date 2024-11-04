@@ -47,7 +47,7 @@ class NearbyRestaurantsViewModel extends ChangeNotifier {
           restaurant.latitude,
           restaurant.longitude,
         );
-        return distance <= 1.0;
+        return distance <= 100.0;
       }).toList();
 
       await _saveMarkersToLocalCache(_restaurants.take(20).toList());
