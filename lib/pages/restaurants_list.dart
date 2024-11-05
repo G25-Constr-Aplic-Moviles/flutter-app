@@ -17,6 +17,7 @@ class RestaurantsListPage extends StatefulWidget {
 
 class _RestaurantsListPageState extends State<RestaurantsListPage> {
   final TextEditingController _searchController = TextEditingController();
+  String _currentCuisineFilter = '';
 
   @override
   void initState() {
@@ -74,7 +75,36 @@ class _RestaurantsListPageState extends State<RestaurantsListPage> {
                       suffixIcon: IconButton(
                         icon: const Icon(Icons.filter_list),
                         onPressed: () {
-                          // TODO: Filters
+                          showModalBottomSheet(
+                            context: context,
+                            builder: (context) {
+                              final cuisineTypes = restaurantsViewModel.getCuisineTypes().toList();
+                              return ListView(
+                                children: [
+                                  ListTile(
+                                    title: const Text('All'),
+                                    onTap: () {
+                                      setState(() {
+                                        _currentCuisineFilter = '';
+                                      });
+                                      restaurantsViewModel.filterRestaurantsByCuisine('');
+                                      Navigator.pop(context);
+                                    },
+                                  ),
+                                  ...cuisineTypes.map((cuisineType) => ListTile(
+                                    title: Text(cuisineType),
+                                    onTap: () {
+                                      setState(() {
+                                        _currentCuisineFilter = cuisineType;
+                                      });
+                                      restaurantsViewModel.filterRestaurantsByCuisine(cuisineType);
+                                      Navigator.pop(context);
+                                    },
+                                  )).toList(),
+                                ],
+                              );
+                            },
+                          );
                         },
                       ),
                       border: OutlineInputBorder(
@@ -112,6 +142,14 @@ class _RestaurantsListPageState extends State<RestaurantsListPage> {
               ],
             ),
           ),
+          if (_currentCuisineFilter.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                'Total restaurants: ${restaurantsViewModel.filteredRestaurants.length}',
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+            ),
           Expanded(
             child: Consumer<RestaurantsListViewModel>(
               builder: (context, viewModel, child) {

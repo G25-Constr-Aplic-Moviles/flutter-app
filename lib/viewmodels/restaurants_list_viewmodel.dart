@@ -92,4 +92,19 @@ class RestaurantsListViewModel extends ChangeNotifier {
     }
     notifyListeners();
   }
+
+  void filterRestaurantsByCuisine(String cuisineType) {
+    if (cuisineType.isEmpty) {
+      _filteredRestaurants = _restaurants;
+    } else {
+      _filteredRestaurants = _restaurants
+          .where((restaurant) => restaurant.cuisineType.toLowerCase() == cuisineType.toLowerCase())
+          .toList();
+    }
+    notifyListeners();
+  }
+
+  Set<String> getCuisineTypes() {
+    return _restaurants.map((restaurant) => restaurant.cuisineType).toSet();
+  }
 }

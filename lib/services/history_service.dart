@@ -33,7 +33,6 @@ class HistoryService implements HistoryRepository {
   @override
   Future<List> fetchHistory() async {
     String? userId = await _tokenManager.userId;
-    print(_tokenManager.userId);
     final response = await http.get(
       Uri.parse('$_baseUrl/history/$userId'),
       headers: <String, String>{
