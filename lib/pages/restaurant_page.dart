@@ -59,7 +59,7 @@ class _RestaurantPageState extends State<RestaurantPage> {
               const SizedBox(height: 25),
               ElevatedButton(
                 onPressed: () {
-                  _restaurantPageViewModel.markRestaurantVisited(widget.restaurant.id);
+                  _restaurantPageViewModel.markRestaurantVisited(widget.restaurant.id, context);
                 },
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
                 child: const Text(

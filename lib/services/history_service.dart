@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:test3/models/token_manager.dart';
 import 'dart:convert';
 import 'package:test3/repositories/history_repository.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 class HistoryService implements HistoryRepository {
   final String? _baseUrl = dotenv.env['HISTORY_API_URL'];
@@ -15,6 +16,11 @@ class HistoryService implements HistoryRepository {
   }
 
   HistoryService._internal();
+
+  Future<bool> isConnectedToInternet() async {
+  var connectivityResult = await Connectivity().checkConnectivity();
+  return connectivityResult != ConnectivityResult.none;
+}
 
   @override
   Future<int> markRestaurantVisited(int idRestaurant) async {
