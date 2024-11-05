@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:test3/models/token_manager.dart';
+import '../models/token_manager.dart';
 import '../viewmodels/restaurants_list_viewmodel.dart';
 import '../viewmodels/route_view_model.dart';
 import '../components/navigation_bar.dart' as custom_nav_bar;
@@ -69,12 +69,12 @@ class _RestaurantsListPageState extends State<RestaurantsListPage> {
                   child: TextField(
                     controller: _searchController,
                     decoration: InputDecoration(
-                      hintText: 'Buscar restaurantes...',
+                      hintText: 'Search restaurants...',
                       prefixIcon: const Icon(Icons.search),
                       suffixIcon: IconButton(
                         icon: const Icon(Icons.filter_list),
                         onPressed: () {
-                          // TODO: Filtros
+                          // TODO: Filters
                         },
                       ),
                       border: OutlineInputBorder(
@@ -92,21 +92,21 @@ class _RestaurantsListPageState extends State<RestaurantsListPage> {
                   child: ElevatedButton(
                     onPressed: () async {
                       final userId = await TokenManager().userId;
-                      if(userId != null){
+                      if (userId != null) {
                         restaurantsViewModel.fetchRecommendedRestaurants(userId);
                       } else {
-                        print("User ID no encontrado. Asegurate que el usuario este autenticado");
+                        print("User ID not found. Make sure the user is authenticated");
                       }
                     },
                     style: ElevatedButton.styleFrom(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8.0),
-                      )
+                      ),
                     ),
                     child: const Icon(
                       Icons.star_border_outlined,
-                      color: Color.fromRGBO(255, 82, 71, 1)
-                      ),
+                      color: Color.fromRGBO(255, 82, 71, 1),
+                    ),
                   ),
                 ),
               ],
@@ -115,6 +115,19 @@ class _RestaurantsListPageState extends State<RestaurantsListPage> {
           Expanded(
             child: Consumer<RestaurantsListViewModel>(
               builder: (context, viewModel, child) {
+                if (viewModel.isLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (viewModel.errorMessage.isNotEmpty) {
+                  return Center(
+                    child: Text(
+                      viewModel.errorMessage,
+                      style: const TextStyle(color: Colors.red, fontSize: 16),
+                    ),
+                  );
+                }
+
                 if (viewModel.restaurants.isEmpty) {
                   return const Center(child: CircularProgressIndicator());
                 }
