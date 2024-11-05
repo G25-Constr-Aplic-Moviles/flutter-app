@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../viewmodels/route_view_model.dart';
 import '../models/restaurant_model.dart';
+import '../models/token_manager.dart';
 
 class RouteView extends StatefulWidget {
   final Restaurant restaurant;
@@ -15,18 +19,60 @@ class RouteView extends StatefulWidget {
 
 class _RouteViewState extends State<RouteView> {
   late GoogleMapController mapController;
+  late DateTime _startTime;
+  final String? _analyticsURL = dotenv.env['API_KEY_HEROKU'];
 
   @override
   void initState() {
     super.initState();
+    _startTime = DateTime.now(); // Captura el tiempo de inicio
+
     final viewModel = Provider.of<RouteViewModel>(context, listen: false);
     viewModel.getCurrentLocation().then((_) {
-      viewModel.fetchRouteToRestaurant(widget.restaurant);
+      viewModel.fetchRouteToRestaurant(widget.restaurant).then((_) {
+        _sendAnalytics(); // Enviar métricas cuando la ruta esté lista
+      });
     });
   }
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
+  }
+
+  Future<void> _sendAnalytics() async {
+    DateTime endTime = DateTime.now();
+    double loadTime = endTime.difference(_startTime).inMilliseconds / 1000; // Tiempo de carga en segundos
+    String? userId = await TokenManager().userId;
+
+    if (userId == null) {
+      print("Error: User ID not found");
+      return;
+    }
+
+    String? herokuApiUrl = '$_analyticsURL/add_time_location';
+    Map<String, dynamic> data = {
+      "plataforma": "Flutter",
+      "tiempo": loadTime,
+      "timestamp": endTime.toUtc().toIso8601String(),
+      "userID": userId,
+
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(herokuApiUrl),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(data),
+      );
+
+      if (response.statusCode == 200) {
+        print("Metrics sent successfully for RouteView.");
+      } else {
+        print("Error sending metrics: ${response.body}");
+      }
+    } catch (e) {
+      print("Error connecting to Heroku service: $e");
+    }
   }
 
   @override
