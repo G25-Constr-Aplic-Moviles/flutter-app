@@ -31,6 +31,15 @@ class _RouteViewState extends State<RouteView> {
     viewModel.getCurrentLocation().then((_) {
       viewModel.fetchRouteToRestaurant(widget.restaurant).then((_) {
         _sendAnalytics(); // Enviar métricas cuando la ruta esté lista
+      }).catchError((error) {
+        // Manejar conectividad eventual: Cargar la ruta en caché si hay error
+        viewModel.loadRouteFromCache(widget.restaurant.id).then((isCached) {
+          if (isCached) {
+            _showCachedRouteNotification(context);
+          } else {
+            _showConnectionErrorNotification(context);
+          }
+        });
       });
     });
   }
@@ -49,13 +58,13 @@ class _RouteViewState extends State<RouteView> {
       return;
     }
 
-    String? herokuApiUrl = '$_analyticsURL/add_time_location';
+    String? herokuApiUrl = '$_analyticsURL/add_time';
     Map<String, dynamic> data = {
       "plataforma": "Flutter",
       "tiempo": loadTime,
       "timestamp": endTime.toUtc().toIso8601String(),
       "userID": userId,
-
+      "feature": "route_view_load_time" // Identificador para esta métrica
     };
 
     try {
@@ -73,6 +82,24 @@ class _RouteViewState extends State<RouteView> {
     } catch (e) {
       print("Error connecting to Heroku service: $e");
     }
+  }
+
+  void _showCachedRouteNotification(BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("Mostrando una ruta en caché debido a problemas de conexión"),
+        duration: Duration(seconds: 3),
+      ),
+    );
+  }
+
+  void _showConnectionErrorNotification(BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("Error de conexión: No se pudo cargar la ruta"),
+        duration: Duration(seconds: 3),
+      ),
+    );
   }
 
   @override
