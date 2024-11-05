@@ -33,7 +33,7 @@ class _RouteViewState extends State<RouteView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Route to ${widget.restaurant.name}'),
+        title: Text('Ruta a ${widget.restaurant.name}'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -51,7 +51,7 @@ class _RouteViewState extends State<RouteView> {
             Marker(
               markerId: const MarkerId('userLocation'),
               position: LatLng(viewModel.currentLocation!.latitude!, viewModel.currentLocation!.longitude!),
-              infoWindow: const InfoWindow(title: 'My Location'),
+              infoWindow: const InfoWindow(title: 'Mi Ubicación'),
             ),
             Marker(
               markerId: MarkerId(widget.restaurant.name),

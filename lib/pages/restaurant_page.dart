@@ -4,22 +4,21 @@ import 'package:test3/models/restaurant_model.dart';
 import 'package:test3/models/review.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:test3/components/navigation_bar.dart' as customNavBar;
-import 'package:test3/pages/full_menu_page.dart';
-import 'package:test3/viewmodels/MenuItemViewModel.dart';
 import 'package:provider/provider.dart';
+import 'package:test3/viewmodels/MenuItemViewModel.dart';
 import 'package:test3/viewmodels/restaurant_page_view_model.dart';
+import 'package:test3/pages/route_view.dart'; // Importamos la vista de la ruta
 
 class RestaurantPage extends StatefulWidget {
-   final Restaurant restaurant;
+  final Restaurant restaurant;
 
-   const RestaurantPage({super.key, required this.restaurant});
+  const RestaurantPage({super.key, required this.restaurant});
 
-   @override
-   State<RestaurantPage> createState() => _RestaurantPageState();
+  @override
+  State<RestaurantPage> createState() => _RestaurantPageState();
 }
 
-class _RestaurantPageState extends State<RestaurantPage>{
-
+class _RestaurantPageState extends State<RestaurantPage> {
   late RestaurantPageViewModel _restaurantPageViewModel;
 
   @override
@@ -30,9 +29,12 @@ class _RestaurantPageState extends State<RestaurantPage>{
     menuItemViewModel.fetchMenu(widget.restaurant.id);
   }
 
-  // reseña que se muestra principalmente
-  final reviewPreview = Review(title: "Increible", username: "MarioLaserna777", numberStars: 5.0, 
-    fullReview: "Probe el arroz de lomo y me gusto demasiado, la atencion es muy buena. Fue rapido y no es muy caro. Lo recomiendo particularmente si tienen prisa, fui a las 2 de la tarde y  no habia mucha gente en el lugar. Ponen musica agradable y se disfruta mucho el almuerzo.");
+  final reviewPreview = Review(
+      title: "Increíble",
+      username: "MarioLaserna777",
+      numberStars: 5.0,
+      fullReview:
+      "Probé el arroz de lomo y me gustó demasiado, la atención es muy buena. Fue rápido y no es muy caro. Lo recomiendo particularmente si tienen prisa. Fui a las 2 de la tarde y no había mucha gente en el lugar. Ponen música agradable y se disfruta mucho el almuerzo.");
 
   @override
   Widget build(BuildContext context) {
@@ -41,10 +43,9 @@ class _RestaurantPageState extends State<RestaurantPage>{
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pop(context); // Navigate back to the previous screen
+            Navigator.pop(context); // Navegar de vuelta
           },
         ),
-        //title: Text(''),
         backgroundColor: Colors.white,
         elevation: 0,
       ),
@@ -56,19 +57,14 @@ class _RestaurantPageState extends State<RestaurantPage>{
             children: [
               Image.network(widget.restaurant.imageUrl),
               const SizedBox(height: 25),
-              // BOTON DE QUE SE VISITO EL RESTAURANTE
               ElevatedButton(
                 onPressed: () {
                   _restaurantPageViewModel.markRestaurantVisited(widget.restaurant.id);
                 },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green
-                ),
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
                 child: const Text(
                   "Marcar visita",
-                  style: TextStyle(
-                    color: Colors.white
-                  ),
+                  style: TextStyle(color: Colors.white),
                 ),
               ),
               const SizedBox(height: 25),
@@ -76,40 +72,57 @@ class _RestaurantPageState extends State<RestaurantPage>{
                 widget.restaurant.name,
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
-                  fontSize: 30, 
-                  ),
+                  fontSize: 30,
+                ),
               ),
-          
+              const SizedBox(height: 10),
+              // Botón "Ver Ruta" para redirigir a la vista de ruta
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => RouteView(restaurant: widget.restaurant),
+                    ),
+                  );
+                },
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
+                child: const Text(
+                  "Ver Ruta al Restaurante",
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+              const SizedBox(height: 25),
               Row(
                 children: [
                   const Expanded(
                     child: Text(
-                                "Menu",
-                                textAlign: TextAlign.left,
-                                style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 30, 
-                                ),
-                              ),
+                      "Menu",
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 30,
+                      ),
+                    ),
                   ),
-                  
                   Expanded(
                     child: InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        // Implementación para ver el menú completo
+                      },
                       child: const Text(
-                                  "Menu completo",
-                                  textAlign: TextAlign.right,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 30, 
-                                    color: Color.fromARGB(255, 5, 82, 215)
-                                  ),
-                                ),
+                        "Menu completo",
+                        textAlign: TextAlign.right,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 30,
+                          color: Color.fromARGB(255, 5, 82, 215),
+                        ),
+                      ),
                     ),
-                  ),  
+                  ),
                 ],
               ),
-              
               SizedBox(
                 height: 250,
                 child: Consumer<MenuItemViewModel>(
@@ -118,44 +131,40 @@ class _RestaurantPageState extends State<RestaurantPage>{
                       scrollDirection: Axis.horizontal,
                       itemCount: viewModel.foodMenu.length,
                       itemBuilder: (context, index) => FoodBooklet(
-                        food: viewModel.foodMenu[index]
-                      ),  
+                        food: viewModel.foodMenu[index],
+                      ),
                     );
                   },
                 ),
               ),
-        
               const Row(
                 children: [
                   Expanded(
                     child: Text(
-                              "Reseñas (4.5)",
-                              textAlign: TextAlign.left,
-                              style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 30, 
-                              ),
-                            ),
+                      "Reseñas (4.5)",
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 30,
+                      ),
                     ),
-                  
-                  
+                  ),
                   Text(
-                              "Ver todas",
-                              textAlign: TextAlign.right,
-                              style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 30, 
-                              ),
-                            ),  
+                    "Ver todas",
+                    textAlign: TextAlign.right,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 30,
+                    ),
+                  ),
                 ],
               ),
-        
               Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20), // Esquinas redondeadas
                   border: Border.all(
                     color: Colors.black, // Color del borde
-                    width: 2.0,         // Grosor del borde
+                    width: 2.0, // Grosor del borde
                   ),
                 ),
                 child: Column(
@@ -164,22 +173,22 @@ class _RestaurantPageState extends State<RestaurantPage>{
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Padding(
-                          padding: const EdgeInsets.only(left:8.0),
+                          padding: const EdgeInsets.only(left: 8.0),
                           child: Text(
                             reviewPreview.title,
                             style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20, 
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
                             ),
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(right:8.0),
+                          padding: const EdgeInsets.only(right: 8.0),
                           child: Text(
                             reviewPreview.username,
                             style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
                             ),
                           ),
                         ),
@@ -188,7 +197,7 @@ class _RestaurantPageState extends State<RestaurantPage>{
                     Row(
                       children: [
                         Padding(
-                          padding: const EdgeInsets.only(left:8.0),
+                          padding: const EdgeInsets.only(left: 8.0),
                           child: RatingBarIndicator(
                             rating: reviewPreview.numberStars,
                             itemBuilder: (context, index) => const Icon(
@@ -202,60 +211,32 @@ class _RestaurantPageState extends State<RestaurantPage>{
                         ),
                       ],
                     ),
-        
                     Row(
                       children: [
                         Expanded(
-                          child: 
-                          Padding(
+                          child: Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
-                                      reviewPreview.fullReview,
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 15,
-                                      ),
-                                    textAlign: TextAlign.justify,
-                                    softWrap: true,
-                                    ),
+                              reviewPreview.fullReview,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15,
+                              ),
+                              textAlign: TextAlign.justify,
+                              softWrap: true,
+                            ),
                           ),
                         ),
-                      ],    
-                    ),      
+                      ],
+                    ),
                   ],
                 ),
               ),
-        
-              const SizedBox(height: 25),
-        
-              const Row(
-                children: [
-                  Text(
-                      "Ubicación",
-                      textAlign: TextAlign.left,
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 30, 
-                      ),
-                  ),
-                ],
-              ),
-
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20), // Esquinas redondeadas
-                  border: Border.all(
-                    color: Colors.black, // Color del borde
-                    width: 2.0,         // Grosor del borde
-                  ),
-                ),
-                child: Image.asset('assets/images/yamato_sushi_location.png'),
-              ),
             ],
-          ),),
+          ),
+        ),
       ),
       bottomNavigationBar: const customNavBar.NavigationBar(),
     );
   }
 }
-
