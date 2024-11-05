@@ -49,7 +49,7 @@ class RestaurantsListViewModel extends ChangeNotifier {
       _filteredRestaurants = _restaurants;
       _errorMessage = '';
     } catch (e) {
-      _errorMessage = 'Error fetching restaurants: $e';
+      _errorMessage = 'Error! Check your internet connection!';
       _isConnected = false;
     } finally {
       _isLoading = false;
@@ -74,7 +74,7 @@ class RestaurantsListViewModel extends ChangeNotifier {
       _filteredRestaurants = _restaurants;
       _errorMessage = '';
     } catch (e) {
-      _errorMessage = 'Error fetching restaurants: $e';
+      _errorMessage = 'Error! Check Your internet connection!';
       _isConnected = false;
     } finally {
       _isLoading = false;
@@ -91,5 +91,20 @@ class RestaurantsListViewModel extends ChangeNotifier {
           .toList();
     }
     notifyListeners();
+  }
+
+  void filterRestaurantsByCuisine(String cuisineType) {
+    if (cuisineType.isEmpty) {
+      _filteredRestaurants = _restaurants;
+    } else {
+      _filteredRestaurants = _restaurants
+          .where((restaurant) => restaurant.cuisineType.toLowerCase() == cuisineType.toLowerCase())
+          .toList();
+    }
+    notifyListeners();
+  }
+
+  Set<String> getCuisineTypes() {
+    return _restaurants.map((restaurant) => restaurant.cuisineType).toSet();
   }
 }

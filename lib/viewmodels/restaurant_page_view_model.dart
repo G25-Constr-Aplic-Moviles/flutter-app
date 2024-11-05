@@ -17,7 +17,6 @@ class RestaurantPageViewModel extends ChangeNotifier {
     _isLoading = false;
     notifyListeners();
 
-    print("status response: $response");
     return response;
   }
 }
