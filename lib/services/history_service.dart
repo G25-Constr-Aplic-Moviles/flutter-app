@@ -17,6 +17,20 @@ class HistoryService implements HistoryRepository {
   HistoryService._internal();
 
   @override
+  Future<int> markRestaurantVisited(int idRestaurant) async {
+    String? userId = await _tokenManager.userId;
+    final response = await http.post(
+      Uri.parse('$_baseUrl/history/add'),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode({
+        "user_id": userId,
+        "restaurant_id": idRestaurant
+      }));
+    
+    return response.statusCode;
+  }
+
+  @override
   Future<List> fetchHistory() async {
     String? userId = await _tokenManager.userId;
     print(_tokenManager.userId);

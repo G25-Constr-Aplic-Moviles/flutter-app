@@ -7,6 +7,7 @@ import 'package:test3/components/navigation_bar.dart' as customNavBar;
 import 'package:test3/pages/full_menu_page.dart';
 import 'package:test3/viewmodels/MenuItemViewModel.dart';
 import 'package:provider/provider.dart';
+import 'package:test3/viewmodels/restaurant_page_view_model.dart';
 
 class RestaurantPage extends StatefulWidget {
    final Restaurant restaurant;
@@ -19,10 +20,13 @@ class RestaurantPage extends StatefulWidget {
 
 class _RestaurantPageState extends State<RestaurantPage>{
 
+  late RestaurantPageViewModel _restaurantPageViewModel;
+
   @override
   void initState() {
     super.initState();
     final menuItemViewModel = Provider.of<MenuItemViewModel>(context, listen: false);
+    _restaurantPageViewModel = Provider.of<RestaurantPageViewModel>(context, listen: false);
     menuItemViewModel.fetchMenu(widget.restaurant.id);
   }
 
@@ -52,6 +56,22 @@ class _RestaurantPageState extends State<RestaurantPage>{
             children: [
               Image.network(widget.restaurant.imageUrl),
               const SizedBox(height: 25),
+              // BOTON DE QUE SE VISITO EL RESTAURANTE
+              ElevatedButton(
+                onPressed: () {
+                  _restaurantPageViewModel.markRestaurantVisited(widget.restaurant.id);
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green
+                ),
+                child: const Text(
+                  "Marcar visita",
+                  style: TextStyle(
+                    color: Colors.white
+                  ),
+                ),
+              ),
+              const SizedBox(height: 25),
               Text(
                 widget.restaurant.name,
                 style: const TextStyle(
@@ -75,12 +95,7 @@ class _RestaurantPageState extends State<RestaurantPage>{
                   
                   Expanded(
                     child: InkWell(
-                      onTap: () {
-                        Navigator.push(
-                          context, 
-                          MaterialPageRoute(builder: (context) => const FullMenuPage()),
-                          );
-                      },
+                      onTap: () {},
                       child: const Text(
                                   "Menu completo",
                                   textAlign: TextAlign.right,
