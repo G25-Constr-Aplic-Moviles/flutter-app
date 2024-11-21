@@ -158,6 +158,24 @@ class _RestaurantsListPageState extends State<RestaurantsListPage> {
                 }
 
                 if (viewModel.errorMessage.isNotEmpty) {
+                  if(viewModel.errorMessage == 'No internet connection!'){
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.wifi_off, color: Colors.red, size: 24),
+                        const SizedBox(width: 10),
+                        Text(
+                          viewModel.errorMessage,
+                          style: const TextStyle(
+                            color: Colors.red,
+                            fontSize: 25,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    );
+                  }
+
                   return Center(
                     child: Text(
                       viewModel.errorMessage,
