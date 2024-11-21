@@ -7,6 +7,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../viewmodels/route_view_model.dart';
 import '../models/restaurant_model.dart';
 import '../models/token_manager.dart';
+import 'restaurant_page.dart'; // Importa la página de detalle del restaurante
 
 class RouteView extends StatefulWidget {
   final Restaurant restaurant;
@@ -20,6 +21,7 @@ class RouteView extends StatefulWidget {
 class _RouteViewState extends State<RouteView> {
   late GoogleMapController mapController;
   late DateTime _startTime;
+  bool _isLoading = true; // Estado para mostrar la carga inicial
   final String? _analyticsURL = dotenv.env['API_KEY_HEROKU'];
 
   @override
@@ -28,19 +30,28 @@ class _RouteViewState extends State<RouteView> {
     _startTime = DateTime.now(); // Captura el tiempo de inicio
 
     final viewModel = Provider.of<RouteViewModel>(context, listen: false);
-    viewModel.getCurrentLocation().then((_) {
-      viewModel.fetchRouteToRestaurant(widget.restaurant).then((_) {
-        _sendAnalytics(); // Enviar métricas cuando la ruta esté lista
-      }).catchError((error) {
-        // Manejar conectividad eventual: Cargar la ruta en caché si hay error
-        viewModel.loadRouteFromCache(widget.restaurant.id).then((isCached) {
-          if (isCached) {
-            _showCachedRouteNotification(context);
-          } else {
-            _showConnectionErrorNotification(context);
-          }
+
+    // Obtención de ubicación y ruta
+    viewModel.getCurrentLocation().then((_) async {
+      try {
+        await viewModel.fetchRouteToRestaurant(widget.restaurant);
+        setState(() {
+          _isLoading = false; // Finaliza la carga si la ruta es exitosa
         });
-      });
+        _sendAnalytics();
+      } catch (e) {
+        // Intentar cargar desde caché si falla la API
+        final isCached = await viewModel.loadRouteFromCache(widget.restaurant.id);
+        if (!isCached) {
+          _showConnectionErrorAndRedirect(); // Mostrar pop-up y redirigir
+        } else {
+          setState(() {
+            _isLoading = false; // Finaliza la carga si se encuentran datos en caché
+          });
+        }
+      }
+    }).catchError((_) {
+      _showConnectionErrorAndRedirect(); // Error al obtener ubicación
     });
   }
 
@@ -84,21 +95,29 @@ class _RouteViewState extends State<RouteView> {
     }
   }
 
-  void _showCachedRouteNotification(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text("Mostrando una ruta en caché debido a problemas de conexión"),
-        duration: Duration(seconds: 3),
-      ),
-    );
-  }
-
-  void _showConnectionErrorNotification(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text("Error de conexión: No se pudo cargar la ruta"),
-        duration: Duration(seconds: 3),
-      ),
+  void _showConnectionErrorAndRedirect() {
+    // Mostrar pop-up y redirigir al detalle del restaurante
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Error de Conexión"),
+          content: const Text("No se pudo cargar la ruta. Revisa tu conexión a internet e inténtalo de nuevo."),
+          actions: [
+            TextButton(
+              child: const Text("OK"),
+              onPressed: () {
+                Navigator.of(context).pop(); // Cierra el diálogo
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => RestaurantPage(restaurant: widget.restaurant),
+                  ),
+                ); // Redirige al detalle del restaurante
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -114,18 +133,27 @@ class _RouteViewState extends State<RouteView> {
           },
         ),
       ),
-      body: Consumer<RouteViewModel>(
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator()) // Mostrar indicador de carga
+          : Consumer<RouteViewModel>(
         builder: (context, viewModel, child) {
-          if (viewModel.currentLocation == null) {
-            return const Center(child: CircularProgressIndicator());
+          if (viewModel.route == null) {
+            return const Center(
+              child: Text("Sorry! We could not load the route,please check your internet connection and try again"),
+            );
           }
 
+          // Marcadores para el usuario y el restaurante
           Set<Marker> markers = {
-            Marker(
-              markerId: const MarkerId('userLocation'),
-              position: LatLng(viewModel.currentLocation!.latitude!, viewModel.currentLocation!.longitude!),
-              infoWindow: const InfoWindow(title: 'Mi Ubicación'),
-            ),
+            if (viewModel.currentLocation != null)
+              Marker(
+                markerId: const MarkerId('userLocation'),
+                position: LatLng(
+                  viewModel.currentLocation!.latitude!,
+                  viewModel.currentLocation!.longitude!,
+                ),
+                infoWindow: const InfoWindow(title: 'Mi Ubicación'),
+              ),
             Marker(
               markerId: MarkerId(widget.restaurant.name),
               position: LatLng(widget.restaurant.latitude, widget.restaurant.longitude),
@@ -133,6 +161,7 @@ class _RouteViewState extends State<RouteView> {
             ),
           };
 
+          // Líneas de la ruta
           Set<Polyline> polylines = {};
           if (viewModel.route != null) {
             polylines.add(
@@ -148,7 +177,7 @@ class _RouteViewState extends State<RouteView> {
           return GoogleMap(
             onMapCreated: _onMapCreated,
             initialCameraPosition: CameraPosition(
-              target: LatLng(viewModel.currentLocation!.latitude!, viewModel.currentLocation!.longitude!),
+              target: LatLng(widget.restaurant.latitude, widget.restaurant.longitude),
               zoom: 15.0,
             ),
             markers: markers,

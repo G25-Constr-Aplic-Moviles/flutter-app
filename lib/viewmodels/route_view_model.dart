@@ -7,6 +7,8 @@ import 'dart:convert';
 import '../models/route_model.dart';
 import '../models/restaurant_model.dart';
 import '../services/api_service.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 
 class RouteViewModel extends ChangeNotifier {
   LocationData? _currentLocation;
@@ -38,13 +40,13 @@ class RouteViewModel extends ChangeNotifier {
     if (_currentLocation == null) return;
 
     try {
-      const String apiKey = 'YOUR_API_KEY_HERE';
+      String? apiKey = dotenv.env['MAPS_API_KEY'];
       Map data = await _apiService.fetchRoute(
         _currentLocation!.latitude!,
         _currentLocation!.longitude!,
         restaurant.latitude,
         restaurant.longitude,
-        apiKey,
+        apiKey!,
       );
 
       if (data['routes'] != null && data['routes'].isNotEmpty) {
@@ -56,7 +58,7 @@ class RouteViewModel extends ChangeNotifier {
 
         notifyListeners();
       } else {
-        print('No route found');
+        print('No route found in API response. Response: $data');
       }
     } catch (e) {
       print('Error fetching route: $e');
