@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:test3/pages/restaurants_list.dart';
 import 'package:test3/services/user_service.dart';
 
@@ -15,13 +16,20 @@ class RegisterViewModel extends ChangeNotifier {
   RegisterViewModel({required this.userService});
 
   Future<void> register(BuildContext context) async {
-    if (!isValidEmail(email)) {
-      _showErrorDialog(context, 'Please enter a valid email.');
+    // Check internet connection first
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.none) {
+      _showErrorDialog(context, 'No internet connection');
       return;
     }
 
     if (firstName.isEmpty || lastName.isEmpty || email.isEmpty || password.isEmpty) {
-      _showErrorDialog(context, 'All fields are required.');
+      _showErrorDialog(context, 'There are empty fields! All items are required.');
+      return;
+    }
+
+    if (!isValidEmail(email)) {
+      _showErrorDialog(context, 'Please enter a valid email.');
       return;
     }
 
@@ -41,14 +49,14 @@ class RegisterViewModel extends ChangeNotifier {
           MaterialPageRoute(builder: (context) => const RestaurantsListPage()),
         );
       } else {
-        _showErrorDialog(context, 'Failed! Try another email.');
+        _showErrorDialog(context, 'Register Failed! Try another email.');
       }
     } on TimeoutException catch (_) {
       isLoading = false;
       _showErrorDialog(context, 'Server timeout!');
     } catch (e) {
       isLoading = false;
-      _showErrorDialog(context, 'An error occurred!');
+      _showErrorDialog(context, 'No internet connection');
     }
 
     notifyListeners();
