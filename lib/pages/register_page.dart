@@ -80,7 +80,8 @@ class RegisterPage extends StatelessWidget {
                         border: OutlineInputBorder(),
                         hintText: 'pass123!',
                       ),
-                      obscureText: true,
+                        obscureText: true,
+                        obscuringCharacter: '*',
                       onChanged: (value) {
                         registerViewModel.password = value;
                       },
