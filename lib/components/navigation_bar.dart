@@ -63,7 +63,7 @@ class _NavigationBarState extends State<NavigationBar> {
           label: 'Profile',
         ),
       ],
-      currentIndex: _selectedIndex,
+      currentIndex: 0,
       selectedItemColor: Colors.white,
       onTap: _onItemTapped,
     );
