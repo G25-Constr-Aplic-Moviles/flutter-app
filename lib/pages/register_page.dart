@@ -1,5 +1,7 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:test3/pages/login_page.dart';
 import 'package:test3/viewmodels/RegisterViewModel.dart';
 
 class RegisterPage extends StatelessWidget {
@@ -26,7 +28,7 @@ class RegisterPage extends StatelessWidget {
               ),
               Container(
                 padding: const EdgeInsets.all(20.0),
-                height: 450,
+
                 width: 284,
                 decoration: BoxDecoration(
                   color: Colors.white,
@@ -102,6 +104,33 @@ class RegisterPage extends StatelessWidget {
                         ),
                       ),
                     ),
+                    const SizedBox(height: 10),
+                    Center(
+                      child: RichText(
+                        text: TextSpan(
+                          text: 'Do you have an account? ',
+                          style: const TextStyle(
+                              color: Colors.black, fontFamily: 'Gidugu'),
+                          children: [
+                            TextSpan(
+                              text: 'LogIn',
+                              style: const TextStyle(
+                                color: Colors.blue,
+                                decoration: TextDecoration.underline,
+                              ),
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () {
+                                  Navigator.pop(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => const LoginView()),
+                                  );
+                                },
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
                   ],
                 ),
               ),

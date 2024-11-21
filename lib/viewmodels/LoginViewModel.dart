@@ -48,11 +48,11 @@ class LoginViewModel extends ChangeNotifier {
       } on TimeoutException catch (_) {
         isLoading = false;
         notifyListeners();
-        _showErrorDialog(context, 'Request timed out. Please try again.');
+        _showErrorDialog(context, 'No internet connection!');
       } catch (e) {
         isLoading = false;
         notifyListeners();
-        _showErrorDialog(context, 'Server Error. Retry!');
+        _showErrorDialog(context, 'No internet connection!');
       }
     }
   }

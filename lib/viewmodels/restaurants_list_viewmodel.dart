@@ -35,7 +35,7 @@ class RestaurantsListViewModel extends ChangeNotifier {
   Future<void> fetchRestaurants() async {
     await _checkConnectivity();
     if (!_isConnected) {
-      _errorMessage = 'No internet connection';
+      _errorMessage = 'No internet connection!';
       notifyListeners();
       return;
     }
@@ -49,7 +49,7 @@ class RestaurantsListViewModel extends ChangeNotifier {
       _filteredRestaurants = _restaurants;
       _errorMessage = '';
     } catch (e) {
-      _errorMessage = 'Error! Check your internet connection!';
+      _errorMessage = 'No internet connection!';
       _isConnected = false;
     } finally {
       _isLoading = false;
@@ -74,7 +74,7 @@ class RestaurantsListViewModel extends ChangeNotifier {
       _filteredRestaurants = _restaurants;
       _errorMessage = '';
     } catch (e) {
-      _errorMessage = 'Error! Check Your internet connection!';
+      _errorMessage = 'No internet connection!';
       _isConnected = false;
     } finally {
       _isLoading = false;
