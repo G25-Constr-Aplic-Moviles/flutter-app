@@ -9,6 +9,7 @@ class ApiService extends RestaurantRepository{
   final String? _baseUrl = dotenv.env['RESTAURANT_API_URL'];
   final String? _baseUrl_recommendation = dotenv.env['RECOMMENDATION_SERVICE_URL'];
 
+
   @override
   Future<List> fetchRestaurants() async {
     final response = await http.get(Uri.parse('$_baseUrl/restaurant/list'));
