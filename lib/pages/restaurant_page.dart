@@ -1,3 +1,4 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:test3/components/food_booklet.dart';
 import 'package:test3/models/restaurant_model.dart';
@@ -27,6 +28,23 @@ class _RestaurantPageState extends State<RestaurantPage> {
     final menuItemViewModel = Provider.of<MenuItemViewModel>(context, listen: false);
     _restaurantPageViewModel = Provider.of<RestaurantPageViewModel>(context, listen: false);
     menuItemViewModel.fetchMenu(widget.restaurant.id);
+
+    _startListeningToConnectivity();
+  }
+
+  bool _isProcessingConnectivity = false;
+
+  void _startListeningToConnectivity() {
+    final Connectivity _connectivity = Connectivity();
+
+    _connectivity.onConnectivityChanged.listen((ConnectivityResult result) async {
+      if (result != ConnectivityResult.none && !_isProcessingConnectivity) {
+        print("se detecto conexion");
+        _isProcessingConnectivity = true;
+        await _restaurantPageViewModel.retryPendingVisits(context);
+        _isProcessingConnectivity = false;
+      }
+    });
   }
 
   final reviewPreview = Review(
@@ -43,7 +61,7 @@ class _RestaurantPageState extends State<RestaurantPage> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pop(context); // Navegar de vuelta
+            Navigator.pop(context);
           },
         ),
         backgroundColor: Colors.white,
@@ -51,78 +69,98 @@ class _RestaurantPageState extends State<RestaurantPage> {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(15.0),
+          padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Image.network(widget.restaurant.imageUrl),
-              const SizedBox(height: 25),
-              ElevatedButton(
-                onPressed: () {
-                  _restaurantPageViewModel.markRestaurantVisited(widget.restaurant.id, context);
-                },
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-                child: const Text(
-                  "Marcar visita",
-                  style: TextStyle(color: Colors.white),
+              // Imagen del restaurante con bordes redondeados
+              ClipRRect(
+                borderRadius: BorderRadius.circular(15),
+                child: Image.network(widget.restaurant.imageUrl),
+              ),
+              const SizedBox(height: 20),
+              
+              // Título del restaurante
+              Center(
+                child: Text(
+                  widget.restaurant.name,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 28,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
               ),
-              const SizedBox(height: 25),
-              Text(
-                widget.restaurant.name,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 30,
-                ),
-              ),
-              const SizedBox(height: 10),
-              // Botón "Ver Ruta" para redirigir a la vista de ruta
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => RouteView(restaurant: widget.restaurant),
-                    ),
-                  );
-                },
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
-                child: const Text(
-                  "Ver Ruta al Restaurante",
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-              const SizedBox(height: 25),
+              const SizedBox(height: 20),
+              
+              // Botones "Marcar visita" y "Ver ruta al restaurante" en la misma fila
               Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Expanded(
-                    child: Text(
-                      "Menu",
-                      textAlign: TextAlign.left,
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 30,
+                  Padding(
+                    padding: const EdgeInsets.only(right: 10.0),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        _restaurantPageViewModel.markRestaurantVisited(widget.restaurant.id, context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        elevation: 5,
+                        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                      ),
+                      child: const Text(
+                        "Marcar visita",
+                        style: TextStyle(color: Colors.white, fontSize: 16),
                       ),
                     ),
                   ),
-                  Expanded(
-                    child: InkWell(
-                      onTap: () {
-                        // Implementación para ver el menú completo
-                      },
-                      child: const Text(
-                        "Menu completo",
-                        textAlign: TextAlign.right,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 30,
-                          color: Color.fromARGB(255, 5, 82, 215),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => RouteView(restaurant: widget.restaurant),
                         ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
                       ),
+                      elevation: 5,
+                      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                    ),
+                    child: const Text(
+                      "Ver Ruta al Restaurante",
+                      style: TextStyle(color: Colors.white, fontSize: 16),
                     ),
                   ),
                 ],
               ),
+              const SizedBox(height: 30),
+              
+              // Línea delimitadora de la sección de botones
+              const Divider(
+                color: Colors.black,
+                thickness: 1,
+                height: 30,
+              ),
+              
+              // Título "Menú"
+              const Text(
+                "Menú",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 24,
+                ),
+              ),
+              const SizedBox(height: 10),
+
+              // Carrusel horizontal para el menú con margen y línea delimitadora
               SizedBox(
                 height: 250,
                 child: Consumer<MenuItemViewModel>(
@@ -130,106 +168,100 @@ class _RestaurantPageState extends State<RestaurantPage> {
                     return ListView.builder(
                       scrollDirection: Axis.horizontal,
                       itemCount: viewModel.foodMenu.length,
-                      itemBuilder: (context, index) => FoodBooklet(
-                        food: viewModel.foodMenu[index],
+                      itemBuilder: (context, index) => Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: FoodBooklet(food: viewModel.foodMenu[index]),
+                        ),
                       ),
                     );
                   },
                 ),
               ),
-              const Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      "Reseñas (4.5)",
-                      textAlign: TextAlign.left,
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 30,
-                      ),
-                    ),
-                  ),
-                  Text(
-                    "Ver todas",
-                    textAlign: TextAlign.right,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 30,
-                    ),
-                  ),
-                ],
+              const SizedBox(height: 30),
+              
+              // Línea delimitadora de la sección de menú
+              const Divider(
+                color: Colors.black,
+                thickness: 1,
+                height: 30,
               ),
+              
+              // Título "Reseñas"
+              const Text(
+                "Reseñas (4.5)",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 24,
+                ),
+              ),
+              const SizedBox(height: 10),
+
+              // Contenedor con sombra para reseñas
               Container(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20), // Esquinas redondeadas
-                  border: Border.all(
-                    color: Colors.black, // Color del borde
-                    width: 2.0, // Grosor del borde
-                  ),
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.3),
+                      spreadRadius: 2,
+                      blurRadius: 5,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
                 ),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 8.0),
-                          child: Text(
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Título y nombre del usuario de la reseña
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
                             reviewPreview.title,
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
-                              fontSize: 20,
+                              fontSize: 18,
                             ),
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(right: 8.0),
-                          child: Text(
+                          Text(
                             reviewPreview.username,
                             style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20,
+                              fontSize: 16,
+                              color: Colors.grey,
                             ),
                           ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+
+                      // Estrellas de valoración
+                      RatingBarIndicator(
+                        rating: reviewPreview.numberStars,
+                        itemBuilder: (context, index) => const Icon(
+                          Icons.star,
+                          color: Colors.black,
                         ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 8.0),
-                          child: RatingBarIndicator(
-                            rating: reviewPreview.numberStars,
-                            itemBuilder: (context, index) => const Icon(
-                              Icons.star,
-                              color: Colors.black,
-                            ),
-                            itemCount: 5,
-                            itemSize: 20,
-                            direction: Axis.horizontal,
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              reviewPreview.fullReview,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 15,
-                              ),
-                              textAlign: TextAlign.justify,
-                              softWrap: true,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
+                        itemCount: 5,
+                        itemSize: 20,
+                        direction: Axis.horizontal,
+                      ),
+                      const SizedBox(height: 10),
+
+                      // Texto de la reseña
+                      Text(
+                        reviewPreview.fullReview,
+                        style: const TextStyle(fontSize: 14),
+                        textAlign: TextAlign.justify,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -239,4 +271,7 @@ class _RestaurantPageState extends State<RestaurantPage> {
       bottomNavigationBar: const customNavBar.NavigationBar(),
     );
   }
+
+
+
 }
