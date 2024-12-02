@@ -18,6 +18,9 @@ class _FoodListViewState extends State<FoodListView> {
   bool _isConnected = true;
   late Connectivity _connectivity;
   late Stream<ConnectivityResult> _connectivityStream;
+  final TextEditingController _searchController = TextEditingController();
+  String _currentFilter = '';
+  String _priceFilter = '';
 
   @override
   void initState() {
@@ -50,10 +53,17 @@ class _FoodListViewState extends State<FoodListView> {
   }
 
   @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Lista de Platos', style: TextStyle(fontSize: 28)),
+        backgroundColor: Colors.red,
+        title: Text('Dishes List', style: TextStyle(fontSize: 28)),
       ),
       body: Consumer<MenuItemViewModel>(
         builder: (context, menuItemViewModel, child) {
@@ -71,6 +81,8 @@ class _FoodListViewState extends State<FoodListView> {
                 ],
               ),
             );
+          } else if (menuItemViewModel.allFoodMenu.isEmpty) {
+            return Center(child: CircularProgressIndicator());
           } else {
             return Column(
               children: [
@@ -90,14 +102,129 @@ class _FoodListViewState extends State<FoodListView> {
                       ],
                     ),
                   ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: _searchController,
+                          decoration: InputDecoration(
+                            hintText: 'Search dishes...',
+                            prefixIcon: const Icon(Icons.search),
+                            suffixIcon: IconButton(
+                              icon: const Icon(Icons.filter_list),
+                              onPressed: () {
+                                showModalBottomSheet(
+                                  context: context,
+                                  builder: (context) {
+                                    return ListView(
+                                      children: [
+                                        ListTile(
+                                          title: const Text('All', style: TextStyle(fontSize: 24),),
+                                          onTap: () {
+                                            setState(() {
+                                              _priceFilter = '';
+                                            });
+                                            menuItemViewModel.filterByPrice(_priceFilter);
+                                            Navigator.pop(context);
+                                          },
+                                        ),
+                                        ListTile(
+                                          title: const Text('Less than \$10,000', style: TextStyle(fontSize: 24),),
+                                          onTap: () {
+                                            setState(() {
+                                              _priceFilter = 'less_than_10000';
+                                            });
+                                            menuItemViewModel.filterByPrice(_priceFilter);
+                                            Navigator.pop(context);
+                                          },
+                                        ),
+                                        ListTile(
+                                          title: const Text('Between \$10,000 and \$20,000', style: TextStyle(fontSize: 24),),
+                                          onTap: () {
+                                            setState(() {
+                                              _priceFilter = 'between_10000_20000';
+                                            });
+                                            menuItemViewModel.filterByPrice(_priceFilter);
+                                            Navigator.pop(context);
+                                          },
+                                        ),
+                                        ListTile(
+                                          title: const Text('More than \$20,000', style: TextStyle(fontSize: 24),),
+                                          onTap: () {
+                                            setState(() {
+                                              _priceFilter = 'more_than_20000';
+                                            });
+                                            menuItemViewModel.filterByPrice(_priceFilter);
+                                            Navigator.pop(context);
+                                          },
+                                        ),
+                                        ListTile(
+                                          title: const Text('Top 5 Cheapest', style: TextStyle(fontSize: 24),),
+                                          onTap: () {
+                                            setState(() {
+                                              _priceFilter = 'top_5_cheapest';
+                                            });
+                                            menuItemViewModel.filterByPrice(_priceFilter);
+                                            Navigator.pop(context);
+                                          },
+                                        ),
+                                        ListTile(
+                                          title: const Text('Top 5 Most Expensive', style: TextStyle(fontSize: 24),),
+                                          onTap: () {
+                                            setState(() {
+                                              _priceFilter = 'top_5_expensive';
+                                            });
+                                            menuItemViewModel.filterByPrice(_priceFilter);
+                                            Navigator.pop(context);
+                                          },
+                                        ),
+                                        ListTile(
+                                          title: const Text('Restaurant with more dishes', style: TextStyle(fontSize: 24),),
+                                          onTap: () {
+                                            setState(() {
+                                              _priceFilter = 'most_dishes';
+                                            });
+                                            menuItemViewModel.filterByPrice(_priceFilter);
+                                            Navigator.pop(context);
+                                          },
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              },
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                          ),
+                          onChanged: (value) {
+                            setState(() {
+                              _currentFilter = value;
+                            });
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
                 Expanded(
                   child: ListView.builder(
-                    itemCount: menuItemViewModel.allFoodMenu.length,
+                    itemCount: menuItemViewModel.filteredFoodMenu.length,
                     itemBuilder: (context, index) {
-                      var item = menuItemViewModel.allFoodMenu[index];
+                      var item = menuItemViewModel.filteredFoodMenu[index];
                       Food food = item['food'];
                       String restaurantName = item['restaurantName'];
                       String restaurantAddress = item['restaurantAddress'];
+
+                      if (_currentFilter.isNotEmpty &&
+                          !food.name.toLowerCase().contains(_currentFilter.toLowerCase()) &&
+                          !restaurantName.toLowerCase().contains(_currentFilter.toLowerCase())) {
+                        return Container();
+                      }
+
                       return Card(
                         margin: EdgeInsets.symmetric(vertical: 8, horizontal: 15), // Espacio de separación más pequeño
                         child: ListTile(
