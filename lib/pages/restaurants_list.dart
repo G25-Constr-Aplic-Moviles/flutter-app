@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../models/token_manager.dart';
 import '../viewmodels/restaurants_list_viewmodel.dart';
 import '../viewmodels/route_view_model.dart';
 import '../components/navigation_bar.dart' as custom_nav_bar;
 import '../components/restaurant_card.dart';
+import 'dishes_list_view.dart';
 import 'nearby__restaurants_view.dart';
 import 'restaurant_page.dart';
+
 
 class RestaurantsListPage extends StatefulWidget {
   const RestaurantsListPage({super.key});
@@ -135,6 +138,27 @@ class _RestaurantsListPageState extends State<RestaurantsListPage> {
                     ),
                     child: const Icon(
                       Icons.star_border_outlined,
+                      color: Color.fromRGBO(255, 82, 71, 1),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                SizedBox(
+                  height: 48,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => FoodListView()), // Redirige a la página de la lista de platos
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                    ),
+                    child: const Icon(
+                      Icons.restaurant_menu,
                       color: Color.fromRGBO(255, 82, 71, 1),
                     ),
                   ),

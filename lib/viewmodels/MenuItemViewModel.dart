@@ -17,4 +17,22 @@ class MenuItemViewModel extends ChangeNotifier {
       print('Error fetching menu: $e');
     }
   }
+
+  Future<Map<String, List<Food>>> fetchAllMenus() async {
+    Map<String, List<Food>> restaurantMenus = {};
+    try {
+      List<dynamic> restaurants = await _apiService.fetchRestaurants();
+      for (var restaurant in restaurants) {
+        int restaurantId = restaurant['id'];
+        String restaurantName = restaurant['name'];
+        List<dynamic> menuData = await _apiService.fetchMenu(restaurantId);
+        List<Food> menuItems = menuData.map((item) => Food.fromJson(item)).toList();
+        restaurantMenus[restaurantName] = menuItems;
+      }
+      notifyListeners();
+    } catch (e) {
+      print('Error fetching all menus: $e');
+    }
+    return restaurantMenus;
+  }
 }
