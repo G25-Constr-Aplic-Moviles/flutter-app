@@ -6,9 +6,10 @@ import 'package:test3/models/review.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:test3/components/navigation_bar.dart' as customNavBar;
 import 'package:provider/provider.dart';
+import 'package:test3/pages/dish_page.dart';
 import 'package:test3/viewmodels/MenuItemViewModel.dart';
 import 'package:test3/viewmodels/restaurant_page_view_model.dart';
-import 'package:test3/pages/route_view.dart'; // Importamos la vista de la ruta
+import 'package:test3/pages/route_view.dart';
 
 class RestaurantPage extends StatefulWidget {
   final Restaurant restaurant;
@@ -168,19 +169,25 @@ class _RestaurantPageState extends State<RestaurantPage> {
                     return ListView.builder(
                       scrollDirection: Axis.horizontal,
                       itemCount: viewModel.foodMenu.length,
-                      itemBuilder: (context, index) => Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: FoodBooklet(food: viewModel.foodMenu[index]),
-                        ),
-                      ),
+                      itemBuilder: (context, index) {
+                        final food = viewModel.foodMenu[index];
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => DishPage(food: food),
+                              ),
+                            );
+                          },
+                          child: FoodBooklet(food: food),
+                        );
+                      },
                     );
                   },
                 ),
               ),
+
               const SizedBox(height: 30),
               
               // Línea delimitadora de la sección de menú
