@@ -10,7 +10,6 @@ import 'dishes_list_view.dart';
 import 'nearby__restaurants_view.dart';
 import 'restaurant_page.dart';
 
-
 class RestaurantsListPage extends StatefulWidget {
   const RestaurantsListPage({super.key});
 
@@ -174,6 +173,14 @@ class _RestaurantsListPageState extends State<RestaurantsListPage> {
                 style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ),
+          if (!restaurantsViewModel.isConnected)
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                'No internet connection!',
+                style: const TextStyle(color: Colors.red, fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+            ),
           Expanded(
             child: Consumer<RestaurantsListViewModel>(
               builder: (context, viewModel, child) {
@@ -181,25 +188,7 @@ class _RestaurantsListPageState extends State<RestaurantsListPage> {
                   return const Center(child: CircularProgressIndicator());
                 }
 
-                if (viewModel.errorMessage.isNotEmpty) {
-                  if(viewModel.errorMessage == 'No internet connection!'){
-                    return Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(Icons.wifi_off, color: Colors.red, size: 24),
-                        const SizedBox(width: 10),
-                        Text(
-                          viewModel.errorMessage,
-                          style: const TextStyle(
-                            color: Colors.red,
-                            fontSize: 25,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    );
-                  }
-
+                if (viewModel.errorMessage.isNotEmpty && viewModel.restaurants.isEmpty) {
                   return Center(
                     child: Text(
                       viewModel.errorMessage,
