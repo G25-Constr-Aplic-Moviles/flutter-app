@@ -213,10 +213,18 @@ class _RestaurantsListPageState extends State<RestaurantsListPage> {
                       address: restaurant.address,
                       restaurantType: restaurant.cuisineType,
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => RestaurantPage(restaurant: restaurant)),
-                        );
+                        if (restaurantsViewModel.isConnected) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => RestaurantPage(restaurant: restaurant)),
+                          );
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Esta función requiere conexión a internet.'),
+                            ),
+                          );
+                        }
                       },
                     );
                   },
