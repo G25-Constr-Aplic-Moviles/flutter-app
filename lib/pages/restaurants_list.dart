@@ -221,8 +221,17 @@ class _RestaurantsListPageState extends State<RestaurantsListPage> {
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                              content: Text('Esta función requiere conexión a internet.'),
+                              content: Text(
+                                'This feature requires internet connection!',
+                                style: TextStyle(
+                                  fontSize: 20.0,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              backgroundColor: Colors.black,
                             ),
+
                           );
                         }
                       },
