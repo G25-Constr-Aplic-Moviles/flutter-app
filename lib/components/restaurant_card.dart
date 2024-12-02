@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class RestaurantCard extends StatelessWidget {
   final String imageUrl;
@@ -36,11 +37,13 @@ class RestaurantCard extends StatelessWidget {
             children: <Widget>[
               ClipRRect(
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
-                child: Image.network(
-                  imageUrl,
+                child: CachedNetworkImage(
+                  imageUrl: imageUrl,
                   height: 120,
                   width: double.infinity,
                   fit: BoxFit.cover,
+                  placeholder: (context, url) => const CircularProgressIndicator(),
+                  errorWidget: (context, url, error) => const Icon(Icons.restaurant, size: 50),
                 ),
               ),
               Padding(
