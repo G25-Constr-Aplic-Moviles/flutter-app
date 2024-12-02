@@ -5,6 +5,7 @@ import '../viewmodels/restaurants_list_viewmodel.dart';
 import '../viewmodels/route_view_model.dart';
 import '../components/navigation_bar.dart' as custom_nav_bar;
 import '../components/restaurant_card.dart';
+import 'discount_restaurants_view.dart';
 import 'nearby__restaurants_view.dart';
 import 'restaurant_page.dart';
 
@@ -62,42 +63,64 @@ class _RestaurantsListPageState extends State<RestaurantsListPage> {
       bottomNavigationBar: const custom_nav_bar.NavigationBar(),
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10.0),
-            child: SingleChildScrollView(
+          Container(
+            margin: const EdgeInsets.symmetric(vertical: 10),
+            height: 50,
+            child: ListView(
               scrollDirection: Axis.horizontal,
-              child: Row(
-                children: [
-                  // Botón de 50% off
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        // Aquí puedes redirigir a la vista de descuentos, por ahora solo muestra un mensaje
-                        // Ejemplo: Navigator.push(context, MaterialPageRoute(builder: (context) => DiscountRestaurantsPage()));
-                      },
-                      child: const Text("50% OFF"),
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.white, backgroundColor: Colors.green, // Color del texto
+              children: [
+                // Botón para 50% off
+                GestureDetector(
+                  onTap: () {
+                    // Navegar a la vista de restaurantes con 50% de descuento
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => DiscountRestaurantsPage(discountType: 'discount_50off'),
+                      ),
+                    );
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    margin: const EdgeInsets.only(right: 10),
+                    decoration: BoxDecoration(
+                      color: Colors.red,
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    child: const Center(
+                      child: Text(
+                        '50% OFF',
+                        style: TextStyle(color: Colors.white, fontSize: 16),
                       ),
                     ),
                   ),
-                  // Botón de 20% off
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        // Aquí puedes redirigir a la vista de descuentos, por ahora solo muestra un mensaje
-                        // Ejemplo: Navigator.push(context, MaterialPageRoute(builder: (context) => DiscountRestaurantsPage()));
-                      },
-                      child: const Text("20% OFF"),
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.white, backgroundColor: Colors.orange, // Color del texto
+                ),
+                // Botón para 20% off
+                GestureDetector(
+                  onTap: () {
+                    // Navegar a la vista de restaurantes con 20% de descuento
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => DiscountRestaurantsPage(discountType: 'discount_20off'),
+                      ),
+                    );
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: Colors.orange,
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    child: const Center(
+                      child: Text(
+                        '20% OFF',
+                        style: TextStyle(color: Colors.white, fontSize: 16),
                       ),
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
           Padding(
