@@ -149,7 +149,7 @@ class _RestaurantsListPageState extends State<RestaurantsListPage> {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => FoodListView()), // Redirige a la página de la lista de platos
+                        MaterialPageRoute(builder: (context) => const FoodListView()),
                       );
                     },
                     style: ElevatedButton.styleFrom(
