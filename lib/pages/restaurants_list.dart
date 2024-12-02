@@ -63,6 +63,44 @@ class _RestaurantsListPageState extends State<RestaurantsListPage> {
       body: Column(
         children: [
           Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10.0),
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  // Botón de 50% off
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        // Aquí puedes redirigir a la vista de descuentos, por ahora solo muestra un mensaje
+                        // Ejemplo: Navigator.push(context, MaterialPageRoute(builder: (context) => DiscountRestaurantsPage()));
+                      },
+                      child: const Text("50% OFF"),
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.white, backgroundColor: Colors.green, // Color del texto
+                      ),
+                    ),
+                  ),
+                  // Botón de 20% off
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        // Aquí puedes redirigir a la vista de descuentos, por ahora solo muestra un mensaje
+                        // Ejemplo: Navigator.push(context, MaterialPageRoute(builder: (context) => DiscountRestaurantsPage()));
+                      },
+                      child: const Text("20% OFF"),
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.white, backgroundColor: Colors.orange, // Color del texto
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(
               children: [
