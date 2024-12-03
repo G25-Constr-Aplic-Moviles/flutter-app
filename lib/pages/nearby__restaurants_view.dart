@@ -1,3 +1,4 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
@@ -55,17 +56,30 @@ class _NearbyRestaurantsViewState extends State<NearbyRestaurantsView> {
     _cacheMapSnapshot(controller);
   }
 
+  // Verifica la conectividad antes de intentar tomar el snapshot
   Future<void> _cacheMapSnapshot(GoogleMapController controller) async {
-    try {
-      final imageBytes = await controller.takeSnapshot();
-      if (imageBytes != null) {
-        final directory = await getApplicationDocumentsDirectory();
-        final file = File('${directory.path}/map_snapshot.png');
-        await file.writeAsBytes(imageBytes);
-        print("Map snapshot saved successfully.");
+    // Verifica si el widget está montado
+    if (!mounted || controller == null) {
+      return;
+    }
+
+    // Verifica la conectividad a internet
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult != ConnectivityResult.none) {
+      // Solo toma el snapshot si hay conexión a Internet
+      try {
+        final imageBytes = await controller.takeSnapshot();
+        if (imageBytes != null) {
+          final directory = await getApplicationDocumentsDirectory();
+          final file = File('${directory.path}/map_snapshot.png');
+          await file.writeAsBytes(imageBytes);
+          print("Map snapshot saved successfully.");
+        }
+      } catch (e) {
+        print("Error taking snapshot: $e");
       }
-    } catch (e) {
-      print("Failed to save map snapshot: $e");
+    } else {
+      print("No internet connection, not taking snapshot.");
     }
   }
 
@@ -105,21 +119,22 @@ class _NearbyRestaurantsViewState extends State<NearbyRestaurantsView> {
   }
 
   void _showConnectionErrorAndRedirect() {
+    // Mostrar mensaje de error y redirigir
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text("Internet Connection Error"),
-          content: const Text("Please check your Internet Connection and try again"),
-          actions: [
+          title: Text("Error de Conexión"),
+          content: Text("No hay conexión a internet. Saliendo a la página principal."),
+          actions: <Widget>[
             TextButton(
-              child: const Text("OK"),
               onPressed: () {
-                Navigator.of(context).pop(); // Cierra el diálogo
-                Navigator.of(context).pushReplacement(
+                Navigator.pushReplacement(
+                  context,
                   MaterialPageRoute(builder: (context) => const RestaurantsListPage()),
-                ); // Redirige a la lista de restaurantes
+                );
               },
+              child: Text("Aceptar"),
             ),
           ],
         );
@@ -131,42 +146,35 @@ class _NearbyRestaurantsViewState extends State<NearbyRestaurantsView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Nearby Restaurants'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
+        backgroundColor: const Color.fromRGBO(255, 82, 71, 1),
+        title: const Text(
+          'Nearby Restaurants',
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
       body: Consumer<NearbyRestaurantsViewModel>(
         builder: (context, viewModel, child) {
-          if (viewModel.currentLocation == null && viewModel.restaurants.isEmpty) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          Set<Marker> markers = {};
-          for (var restaurant in viewModel.restaurants) {
-            markers.add(
-              Marker(
-                markerId: MarkerId(restaurant.name),
-                position: LatLng(restaurant.latitude, restaurant.longitude),
-                infoWindow: InfoWindow(title: restaurant.name),
-              ),
-            );
+          if (viewModel.restaurants.isEmpty) {
+            return Center(child: CircularProgressIndicator());
           }
 
           return GoogleMap(
             onMapCreated: _onMapCreated,
             initialCameraPosition: CameraPosition(
-              target: viewModel.currentLocation != null
-                  ? LatLng(viewModel.currentLocation!.latitude!, viewModel.currentLocation!.longitude!)
-                  : LatLng(0, 0),
-              zoom: 15.0,
+              target: LatLng(viewModel.currentLocation?.latitude ?? 0.0, viewModel.currentLocation?.longitude ?? 0.0),
+              zoom: 14.0,
             ),
-            markers: markers,
             myLocationEnabled: true,
             myLocationButtonEnabled: true,
+            markers: viewModel.restaurants
+                .map(
+                  (restaurant) => Marker(
+                markerId: MarkerId(restaurant.id.toString()),
+                position: LatLng(restaurant.latitude, restaurant.longitude),
+                infoWindow: InfoWindow(title: restaurant.name, snippet: restaurant.address),
+              ),
+            )
+                .toSet(),
           );
         },
       ),

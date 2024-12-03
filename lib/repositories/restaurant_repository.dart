@@ -5,4 +5,7 @@ abstract class RestaurantRepository {
   Future<Map> fetchRoute(double originLat, double originLng, double destLat, double destLng, String apiKey);
   Future<List> fetchRestaurantsWithDiscount(String discountType);
 
+  Future<int> fetchLikesDislikes(int itemId);
+  Future<void> updateLikes(int itemId);
+  Future<void> updateDislikes(int itemId);
 }

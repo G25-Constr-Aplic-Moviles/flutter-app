@@ -1,23 +1,38 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
-import 'package:test3/models/experience.dart';
+import 'package:provider/provider.dart';
 import 'package:test3/models/food.dart';
 import 'package:test3/components/navigation_bar.dart' as customNavBar;
+import 'package:test3/viewmodels/MenuItemViewModel.dart';
 
 
 class DishPage extends StatefulWidget {
-  const DishPage({super.key});
+  final Food food;
+  DishPage({super.key, required this.food});
 
   @override
   State<DishPage> createState() => _DishPageState();
 }
 
 class _DishPageState extends State<DishPage>{ 
-  
-  final food = Food(id: 2, imageUrl: "assets/images/arroz_lomo.png", price: 20, name: "Arroz de lomo", description: "chao");
-  final experience = Experience(experience: "El Arroz de Lomo fue una delicia total. Cada bocado estaba lleno de sabor, con el lomo tierno y jugoso que se deshacía en la boca. La mezcla de pimientos y cebolla le da un toque dulce y ahumado que equilibra perfectamente con el arroz esponjoso. Además, la salsa de soya y jengibre es el complemento ideal, agregando una capa extra de sabor que lo hace irresistible. Sin duda, este plato se ha convertido en uno de mis favoritos. ¡Altamente recomendado!");
+
+
+  @override
+  void initState(){
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      MenuItemViewModel viewModel = Provider.of<MenuItemViewModel>(context, listen: false);
+      viewModel.fetchLikesDislikes(widget.food.id);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+
+    final food = widget.food;
+    final viewModel = Provider.of<MenuItemViewModel>(context);
+    
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -39,7 +54,7 @@ class _DishPageState extends State<DishPage>{
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(8.0),
                 child: 
-                  Image.asset(
+                  Image.network(
                     food.imageUrl,
                     width: double.infinity,
                     height: 200,
@@ -62,8 +77,8 @@ class _DishPageState extends State<DishPage>{
               ),
             ),
 
-            const Text(
-              'Un plato clásico elevado a nuevas alturas. Arroz jazmín perfectamente cocido, impregnado con un caldo de carne rico y sabroso, acompañado de jugosos trozos de lomo de res salteados al punto perfecto. Se combina con pimientos asados, cebolla caramelizada y un toque de ajo para un sabor profundo y envolvente.',
+            Text(
+              food.description,
               style: TextStyle(
                 fontSize: 20,
                 height: 1.2,
@@ -84,41 +99,110 @@ class _DishPageState extends State<DishPage>{
                     fontSize: 25
                   ),
                 ),
-
-                FloatingActionButton.small(
-                  backgroundColor: Colors.redAccent,
-                  tooltip: 'Increment',
-                  onPressed: (){},
-                  child: const Icon(Icons.add, color: Colors.white, size: 28),
-                ), 
               ],
             ),
 
             Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20), // Esquinas redondeadas
-                  border: Border.all(
-                    color: Colors.black, // Color del borde
-                    width: 2.0,         // Grosor del borde
-                  ),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20), // Esquinas redondeadas
+                border: Border.all(
+                  color: Colors.black.withOpacity(0.2), // Border color suavizado
+                  width: 2.0,                          // Grosor del borde
                 ),
-                child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                                      experience.experience,
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 15,
-                                      ),
-                                    textAlign: TextAlign.justify,
-                                    softWrap: true,
-                                    ),
-                          ),
+                boxShadow: [                            // Sombra suave para un efecto de elevación
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 10,
+                    spreadRadius: 2,
+                    offset: Offset(0, 2), // Desplazamiento de la sombra
+                  ),
+                ],
+                gradient: LinearGradient(               // Fondo con un gradiente suave
+                  colors: [Colors.white, Colors.grey.shade100],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
               ),
+              padding: const EdgeInsets.all(16.0), // Más padding para que el contenido no esté tan pegado
+              child: Row( // Usamos Row para alinear los elementos horizontalmente
+                mainAxisAlignment: MainAxisAlignment.spaceBetween, // Espacio entre los elementos
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  // Botón de like
+                  IconButton(
+                    icon: Icon(
+                      Icons.thumb_up,
+                      color: Colors.blue,
+                    ),
+                    onPressed: () {
+                      viewModel.updateLikes(widget.food.id);
+                    },
+                  ),
+
+                  // Columna con el texto
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center, // Centrado verticalmente
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      if(viewModel.isLoading)
+                        const CircularProgressIndicator()
+                      else ...[
+                        Text(
+                          '${viewModel.likesDislikes}%',  // Muestra el porcentaje
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 32,
+                            color: _getTextColor(viewModel.likesDislikes), // Color dinámico
+                          ),
+                        ),
+                        const SizedBox(height: 8), // Espacio entre el porcentaje y la etiqueta
+                        Text(
+                          "Recomiendan este plato",  // Etiqueta opcional
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 18,
+                            color: Colors.black.withOpacity(0.7),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+
+                  // Botón de dislike
+                  IconButton(
+                    icon: Icon(
+                      Icons.thumb_down,
+                      color: Colors.red,
+                    ),
+                    onPressed: () {
+                      viewModel.updateDislikes(widget.food.id);
+                    },
+                  ),
+                ],
+              ),
+            ),
+            
           ],
         ),
       ),
     bottomNavigationBar: const customNavBar.NavigationBar(),
     );
   }
+
+Color _getTextColor(int likesDislikes) {
+  if (likesDislikes >= 0 && likesDislikes <= 19) {
+    return Colors.red;
+  } else if (likesDislikes >= 20 && likesDislikes <= 39) {
+    return Colors.orange;
+  } else if (likesDislikes >= 40 && likesDislikes <= 59) {
+    return Colors.yellow;
+  } else if (likesDislikes >= 60 && likesDislikes <= 79) {
+    return Colors.green;
+  } else if (likesDislikes >= 80 && likesDislikes <= 100) {
+    return Colors.blue;
+  } else {
+    return Colors.black; // En caso de que el valor esté fuera de este rango, puedes asignar un color por defecto
+  }
+}
+
 }
