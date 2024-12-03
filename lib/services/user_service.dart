@@ -31,7 +31,7 @@ class UserService implements UserRepository {
 
     if (response.statusCode == 200) {
       final responseBody = jsonDecode(response.body);
-      TokenManager().setToken(responseBody['token'], responseBody['token'], responseBody['expireAt']);
+      TokenManager().setToken(responseBody['token'], responseBody['id'], responseBody['expireAt']);
       return true;
     } else {
       return false;
