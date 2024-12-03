@@ -67,4 +67,20 @@ class Restaurant {
       longitude: map['longitude'],
     );
   }
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'address': address,
+      'location': {
+        'latitude': latitude,
+        'longitude': longitude,
+      },
+      'image_url': imageUrl,
+      'restaurant_id': id,
+      'cuisine_type': cuisineType,
+      'total_reviews': totalReviews,
+      'average_rating': averageRating,
+    };
+  }
 }
+
