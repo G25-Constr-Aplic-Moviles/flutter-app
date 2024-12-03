@@ -191,7 +191,13 @@ class MenuItemViewModel extends ChangeNotifier {
     } 
   }
 
-  Future<void> updateLikes(int idItem) async {
+  Future<void> updateLikes(BuildContext context, int idItem) async {
+    await _checkConnectivity();
+    if(!_isConnected){
+      _showSnackBar(context, "No se pudo ejecutar esta acción. Revisa tu conexion a internet.", Colors.black);
+      return;
+    }
+
     try{
       await _apiService.updateLikes(idItem);
       fetchLikesDislikes(idItem);
@@ -201,7 +207,13 @@ class MenuItemViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> updateDislikes(int idItem) async {
+  Future<void> updateDislikes(BuildContext context, int idItem) async {
+    await _checkConnectivity();
+    if(!_isConnected){
+      _showSnackBar(context, "No se pudo ejecutar esta acción. Revisa tu conexion a internet.", Colors.black);
+      return;
+    }
+
     try{
       await _apiService.updateDislikes(idItem);
       fetchLikesDislikes(idItem);
@@ -210,6 +222,17 @@ class MenuItemViewModel extends ChangeNotifier {
       print('Error updating dislikes: $e');
     }
   }
+}
+
+void _showSnackBar(BuildContext context, String message, Color backgroundColor) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text(message),
+      backgroundColor: backgroundColor,
+      behavior: SnackBarBehavior.floating,
+      duration: const Duration(seconds: 3),
+      ),
+  );
 }
 
 

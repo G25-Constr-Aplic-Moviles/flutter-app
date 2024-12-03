@@ -123,6 +123,18 @@ class _RestaurantsListPageState extends State<RestaurantsListPage> {
                   height: 48,
                   child: ElevatedButton(
                     onPressed: () async {
+                      if (!restaurantsViewModel.isConnected){
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Revisa tu conexión a internet'),
+                            backgroundColor: Colors.black,
+                            behavior: SnackBarBehavior.floating,
+                            duration: const Duration(seconds: 3),
+                          ),
+                        );
+                        return;
+                      }
+                      
                       final userId = await TokenManager().userId;
                       if (userId != null) {
                         restaurantsViewModel.fetchRecommendedRestaurants(userId);

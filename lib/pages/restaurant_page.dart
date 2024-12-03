@@ -65,7 +65,7 @@ class _RestaurantPageState extends State<RestaurantPage> {
             Navigator.pop(context);
           },
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.red,
         elevation: 0,
       ),
       body: SingleChildScrollView(

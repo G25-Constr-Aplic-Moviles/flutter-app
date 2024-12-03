@@ -42,7 +42,7 @@ class _DishPageState extends State<DishPage>{
           },
         ),
         //title: Text(''),
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.red,
         elevation: 0,
       ),
       body: SingleChildScrollView(
@@ -135,7 +135,7 @@ class _DishPageState extends State<DishPage>{
                       color: Colors.blue,
                     ),
                     onPressed: () {
-                      viewModel.updateLikes(widget.food.id);
+                      viewModel.updateLikes(context, widget.food.id);
                     },
                   ),
 
@@ -144,8 +144,17 @@ class _DishPageState extends State<DishPage>{
                     mainAxisAlignment: MainAxisAlignment.center, // Centrado verticalmente
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      if(viewModel.isLoading)
+                      if(viewModel.isLoading && viewModel.isConnected)
                         const CircularProgressIndicator()
+                      else if (!viewModel.isConnected)
+                        Text(
+                          'Sin conexión a internet',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                            color: Colors.red,
+                          ),
+                        )
                       else ...[
                         Text(
                           '${viewModel.likesDislikes}%',  // Muestra el porcentaje
@@ -175,7 +184,7 @@ class _DishPageState extends State<DishPage>{
                       color: Colors.red,
                     ),
                     onPressed: () {
-                      viewModel.updateDislikes(widget.food.id);
+                      viewModel.updateDislikes(context, widget.food.id);
                     },
                   ),
                 ],
@@ -185,7 +194,6 @@ class _DishPageState extends State<DishPage>{
           ],
         ),
       ),
-    bottomNavigationBar: const customNavBar.NavigationBar(),
     );
   }
 
