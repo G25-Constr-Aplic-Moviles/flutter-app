@@ -33,10 +33,18 @@ class _RestaurantsListPageState extends State<RestaurantsListPage> {
     super.dispose();
   }
 
+  void _navigateToDiscountView(String discountType) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => DiscountedRestaurantsPage(initialDiscountType: discountType),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final restaurantsViewModel = Provider.of<RestaurantsListViewModel>(context);
-    final routeViewModel = Provider.of<RouteViewModel>(context, listen: false);
 
     return Scaffold(
       appBar: AppBar(
@@ -63,66 +71,19 @@ class _RestaurantsListPageState extends State<RestaurantsListPage> {
       bottomNavigationBar: const custom_nav_bar.NavigationBar(),
       body: Column(
         children: [
+          // Botones de descuento
           Container(
             margin: const EdgeInsets.symmetric(vertical: 10),
             height: 50,
             child: ListView(
               scrollDirection: Axis.horizontal,
               children: [
-                // Botón para 50% off
-                GestureDetector(
-                  onTap: () {
-                    // Navegar a la vista de restaurantes con 50% de descuento
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => DiscountRestaurantsPage(discountType: 'discount_50off'),
-                      ),
-                    );
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                    margin: const EdgeInsets.only(right: 10),
-                    decoration: BoxDecoration(
-                      color: Colors.red,
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    child: const Center(
-                      child: Text(
-                        '50% OFF',
-                        style: TextStyle(color: Colors.white, fontSize: 16),
-                      ),
-                    ),
-                  ),
-                ),
-                // Botón para 20% off
-                GestureDetector(
-                  onTap: () {
-                    // Navegar a la vista de restaurantes con 20% de descuento
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => DiscountRestaurantsPage(discountType: 'discount_20off'),
-                      ),
-                    );
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                    decoration: BoxDecoration(
-                      color: Colors.orange,
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    child: const Center(
-                      child: Text(
-                        '20% OFF',
-                        style: TextStyle(color: Colors.white, fontSize: 16),
-                      ),
-                    ),
-                  ),
-                ),
+                _buildDiscountButton('50% OFF', Colors.red, 'discount_50off'),
+                _buildDiscountButton('20% OFF', Colors.orange, 'discount_20off'),
               ],
             ),
           ),
+          // Barra de búsqueda
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(
@@ -136,36 +97,7 @@ class _RestaurantsListPageState extends State<RestaurantsListPage> {
                       suffixIcon: IconButton(
                         icon: const Icon(Icons.filter_list),
                         onPressed: () {
-                          showModalBottomSheet(
-                            context: context,
-                            builder: (context) {
-                              final cuisineTypes = restaurantsViewModel.getCuisineTypes().toList();
-                              return ListView(
-                                children: [
-                                  ListTile(
-                                    title: const Text('All'),
-                                    onTap: () {
-                                      setState(() {
-                                        _currentCuisineFilter = '';
-                                      });
-                                      restaurantsViewModel.filterRestaurantsByCuisine('');
-                                      Navigator.pop(context);
-                                    },
-                                  ),
-                                  ...cuisineTypes.map((cuisineType) => ListTile(
-                                    title: Text(cuisineType),
-                                    onTap: () {
-                                      setState(() {
-                                        _currentCuisineFilter = cuisineType;
-                                      });
-                                      restaurantsViewModel.filterRestaurantsByCuisine(cuisineType);
-                                      Navigator.pop(context);
-                                    },
-                                  )).toList(),
-                                ],
-                              );
-                            },
-                          );
+                          _showFilterSheet(restaurantsViewModel);
                         },
                       ),
                       border: OutlineInputBorder(
@@ -175,29 +107,6 @@ class _RestaurantsListPageState extends State<RestaurantsListPage> {
                     onChanged: (value) {
                       restaurantsViewModel.filterRestaurants(value);
                     },
-                  ),
-                ),
-                const SizedBox(width: 8),
-                SizedBox(
-                  height: 48,
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      final userId = await TokenManager().userId;
-                      if (userId != null) {
-                        restaurantsViewModel.fetchRecommendedRestaurants(userId);
-                      } else {
-                        print("User ID not found. Make sure the user is authenticated");
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                    ),
-                    child: const Icon(
-                      Icons.star_border_outlined,
-                      color: Color.fromRGBO(255, 82, 71, 1),
-                    ),
                   ),
                 ),
               ],
@@ -212,68 +121,103 @@ class _RestaurantsListPageState extends State<RestaurantsListPage> {
               ),
             ),
           Expanded(
-            child: Consumer<RestaurantsListViewModel>(
-              builder: (context, viewModel, child) {
-                if (viewModel.isLoading) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-
-                if (viewModel.errorMessage.isNotEmpty) {
-                  if(viewModel.errorMessage == 'No internet connection!'){
-                    return Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(Icons.wifi_off, color: Colors.red, size: 24),
-                        const SizedBox(width: 10),
-                        Text(
-                          viewModel.errorMessage,
-                          style: const TextStyle(
-                            color: Colors.red,
-                            fontSize: 25,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    );
-                  }
-
-                  return Center(
-                    child: Text(
-                      viewModel.errorMessage,
-                      style: const TextStyle(color: Colors.red, fontSize: 16),
-                    ),
-                  );
-                }
-
-                if (viewModel.restaurants.isEmpty) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-
-                return ListView.builder(
-                  itemCount: viewModel.filteredRestaurants.length,
-                  itemBuilder: (context, index) {
-                    final restaurant = viewModel.filteredRestaurants[index];
-                    return RestaurantCard(
-                      imageUrl: restaurant.imageUrl,
-                      name: restaurant.name,
-                      averageRating: restaurant.averageRating,
-                      reviewCount: restaurant.totalReviews,
-                      address: restaurant.address,
-                      restaurantType: restaurant.cuisineType,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => RestaurantPage(restaurant: restaurant)),
-                        );
-                      },
-                    );
-                  },
-                );
-              },
-            ),
+            child: _buildRestaurantList(restaurantsViewModel),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildDiscountButton(String text, Color color, String discountType) {
+    return GestureDetector(
+      onTap: () => _navigateToDiscountView(discountType),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        margin: const EdgeInsets.only(right: 10),
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(30),
+        ),
+        child: Center(
+          child: Text(
+            text,
+            style: const TextStyle(color: Colors.white, fontSize: 16),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showFilterSheet(RestaurantsListViewModel viewModel) {
+    final cuisineTypes = viewModel.getCuisineTypes().toList();
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return ListView(
+          children: [
+            ListTile(
+              title: const Text('All'),
+              onTap: () {
+                setState(() {
+                  _currentCuisineFilter = '';
+                });
+                viewModel.filterRestaurantsByCuisine('');
+                Navigator.pop(context);
+              },
+            ),
+            ...cuisineTypes.map((cuisineType) => ListTile(
+              title: Text(cuisineType),
+              onTap: () {
+                setState(() {
+                  _currentCuisineFilter = cuisineType;
+                });
+                viewModel.filterRestaurantsByCuisine(cuisineType);
+                Navigator.pop(context);
+              },
+            )),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildRestaurantList(RestaurantsListViewModel viewModel) {
+    if (viewModel.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (viewModel.errorMessage.isNotEmpty) {
+      return Center(
+        child: Text(
+          viewModel.errorMessage,
+          style: const TextStyle(color: Colors.red, fontSize: 16),
+        ),
+      );
+    }
+
+    if (viewModel.restaurants.isEmpty) {
+      return const Center(child: Text('No restaurants available.'));
+    }
+
+    return ListView.builder(
+      itemCount: viewModel.filteredRestaurants.length,
+      itemBuilder: (context, index) {
+        final restaurant = viewModel.filteredRestaurants[index];
+        return RestaurantCard(
+          imageUrl: restaurant.imageUrl,
+          name: restaurant.name,
+          averageRating: restaurant.averageRating,
+          reviewCount: restaurant.totalReviews,
+          address: restaurant.address,
+          restaurantType: restaurant.cuisineType,
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => RestaurantPage(restaurant: restaurant)),
+            );
+          },
+        );
+      },
     );
   }
 }

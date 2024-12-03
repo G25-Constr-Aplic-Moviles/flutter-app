@@ -47,7 +47,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => RegisterViewModel(userService: UserService())),
         ChangeNotifierProvider(create: (context) => HistoryViewModel()),
         ChangeNotifierProvider(create: (context) => RestaurantPageViewModel()),
-        ChangeNotifierProvider(create: (context) => DiscountRestaurantsViewModel())
+        ChangeNotifierProvider(create: (context) => DiscountedRestaurantsViewModel())
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

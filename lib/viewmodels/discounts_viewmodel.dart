@@ -1,27 +1,48 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:test3/services/api_service.dart';
-import 'package:test3/models/restaurant_model.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import '../models/restaurant_model.dart';
 
-class DiscountRestaurantsViewModel extends ChangeNotifier {
-  final ApiService _apiService = ApiService();
+class DiscountedRestaurantsViewModel extends ChangeNotifier {
+  List<Restaurant> _restaurants = [];
+  List<Restaurant> get restaurants => _restaurants;
 
-  List<Restaurant> _restaurantsWithDiscount = [];
-  List<Restaurant> get restaurantsWithDiscount => _restaurantsWithDiscount;
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
 
-  // Método para obtener los restaurantes con un descuento específico
-  Future<void> fetchRestaurantsWithDiscount(String discountType) async {
+  Future<void> fetchRestaurants(String discount) async {
+    final String cacheKey = 'restaurants_$discount';
+    _isLoading = true;
+    notifyListeners();
+
     try {
-      // Llamada al servicio de API para obtener los restaurantes con el descuento
-      final List response = await _apiService.fetchRestaurantsWithDiscount(discountType);
+      // Fetch data from network
+      final response = await http.get(Uri.parse(
+          'https://restaurantservice-375afbe356dc.herokuapp.com/restaurant/discounts/$discount'));
+      if (response.statusCode == 200) {
+        final List<dynamic> jsonData = jsonDecode(response.body);
+        _restaurants = jsonData.map((data) => Restaurant.fromJson(data)).toList();
 
-      // Convertimos la respuesta en una lista de objetos Restaurant
-      _restaurantsWithDiscount = response.map((e) => Restaurant.fromJson(e)).toList();
-
-      // Notificamos a los escuchadores de cambios
+        // Cache the data
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setString(cacheKey, jsonEncode(jsonData));
+      } else {
+        throw Exception('Failed to load restaurants from network');
+      }
+    } catch (e) {
+      // Fallback to cache
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      final String? cachedData = prefs.getString(cacheKey);
+      if (cachedData != null) {
+        final List<dynamic> jsonData = jsonDecode(cachedData);
+        _restaurants = jsonData.map((data) => Restaurant.fromJson(data)).toList();
+      } else {
+        _restaurants = [];
+      }
+    } finally {
+      _isLoading = false;
       notifyListeners();
-    } catch (error) {
-      print('Error fetching discounted restaurants: $error');
-      throw Exception('Failed to load discounted restaurants');
     }
   }
 }
