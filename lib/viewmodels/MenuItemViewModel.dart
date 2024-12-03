@@ -10,15 +10,17 @@ class MenuItemViewModel extends ChangeNotifier {
   List<Map<String, dynamic>> _allFoodMenu = [];
   List<Map<String, dynamic>> _filteredFoodMenu = [];
   final ApiService _apiService = ApiService();
-  bool _isConnected = true;
   bool _isLoading = false;
+  bool _isConnected = true;
   String _errorMessage = '';
+  int _likesDislikes = 0;
 
   List<Food> get foodMenu => _foodMenu;
+  int get likesDislikes => _likesDislikes;
+  bool get isLoading => _isLoading;
   List<Map<String, dynamic>> get allFoodMenu => _allFoodMenu;
   List<Map<String, dynamic>> get filteredFoodMenu => _filteredFoodMenu;
   bool get isConnected => _isConnected;
-  bool get isLoading => _isLoading;
   String get errorMessage => _errorMessage;
 
   MenuItemViewModel() {
@@ -173,4 +175,41 @@ class MenuItemViewModel extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  Future<void> fetchLikesDislikes(int idItem) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      int result = await _apiService.fetchLikesDislikes(idItem);
+
+      _likesDislikes = result;
+      _isLoading = false;
+      notifyListeners();
+    } catch (e) {
+      print('Error fetching likes/dislikes: $e');
+    } 
+  }
+
+  Future<void> updateLikes(int idItem) async {
+    try{
+      await _apiService.updateLikes(idItem);
+      fetchLikesDislikes(idItem);
+      notifyListeners();
+    } catch (e) {
+      print('Error updating likes: $e');
+    }
+  }
+
+  Future<void> updateDislikes(int idItem) async {
+    try{
+      await _apiService.updateDislikes(idItem);
+      fetchLikesDislikes(idItem);
+      notifyListeners();
+    } catch (e) {
+      print('Error updating dislikes: $e');
+    }
+  }
 }
+
+
