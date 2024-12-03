@@ -62,6 +62,24 @@ class _DiscountedRestaurantsPageState extends State<DiscountedRestaurantsPage> {
             return const Center(child: CircularProgressIndicator());
           }
 
+          if (viewModel.errorMessage.isNotEmpty) {
+            // Mostrar mensaje de error si no hay conexión ni caché
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(viewModel.errorMessage, textAlign: TextAlign.center),
+                  ElevatedButton(
+                    onPressed: () {
+                      _fetchRestaurants();
+                    },
+                    child: const Text('Retry'),
+                  ),
+                ],
+              ),
+            );
+          }
+
           if (viewModel.restaurants.isEmpty) {
             return const Center(child: Text('No restaurants found.'));
           }

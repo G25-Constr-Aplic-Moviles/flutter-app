@@ -11,9 +11,13 @@ class DiscountedRestaurantsViewModel extends ChangeNotifier {
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
+  String _errorMessage = ''; // Campo para el mensaje de error
+  String get errorMessage => _errorMessage;
+
   Future<void> fetchRestaurants(String discount) async {
     final String cacheKey = 'restaurants_$discount';
     _isLoading = true;
+    _errorMessage = ''; // Resetear el error antes de intentar cargar los datos
     notifyListeners();
 
     try {
@@ -39,6 +43,7 @@ class DiscountedRestaurantsViewModel extends ChangeNotifier {
         _restaurants = jsonData.map((data) => Restaurant.fromJson(data)).toList();
       } else {
         _restaurants = [];
+        _errorMessage = 'No internet connection and no cached data available.';
       }
     } finally {
       _isLoading = false;
