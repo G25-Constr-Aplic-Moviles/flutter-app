@@ -63,7 +63,7 @@ class _FoodListViewState extends State<FoodListView> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.red,
-        title: Text('Dishes List', style: TextStyle(fontSize: 28)),
+        title: Text('Dish List', style: TextStyle(fontSize: 28)),
       ),
       body: Consumer<MenuItemViewModel>(
         builder: (context, menuItemViewModel, child) {
