@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../models/token_manager.dart';
 import '../viewmodels/restaurants_list_viewmodel.dart';
 import '../viewmodels/route_view_model.dart';
 import '../components/navigation_bar.dart' as custom_nav_bar;
 import '../components/restaurant_card.dart';
+import 'dishes_list_view.dart';
 import 'nearby__restaurants_view.dart';
 import 'restaurant_page.dart';
 
@@ -139,6 +141,27 @@ class _RestaurantsListPageState extends State<RestaurantsListPage> {
                     ),
                   ),
                 ),
+                const SizedBox(width: 8),
+                SizedBox(
+                  height: 48,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const FoodListView()),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                    ),
+                    child: const Icon(
+                      Icons.restaurant_menu,
+                      color: Color.fromRGBO(255, 82, 71, 1),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
@@ -150,6 +173,14 @@ class _RestaurantsListPageState extends State<RestaurantsListPage> {
                 style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ),
+          if (!restaurantsViewModel.isConnected)
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                'No internet connection!',
+                style: const TextStyle(color: Colors.red, fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+            ),
           Expanded(
             child: Consumer<RestaurantsListViewModel>(
               builder: (context, viewModel, child) {
@@ -157,25 +188,7 @@ class _RestaurantsListPageState extends State<RestaurantsListPage> {
                   return const Center(child: CircularProgressIndicator());
                 }
 
-                if (viewModel.errorMessage.isNotEmpty) {
-                  if(viewModel.errorMessage == 'No internet connection!'){
-                    return Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(Icons.wifi_off, color: Colors.red, size: 24),
-                        const SizedBox(width: 10),
-                        Text(
-                          viewModel.errorMessage,
-                          style: const TextStyle(
-                            color: Colors.red,
-                            fontSize: 25,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    );
-                  }
-
+                if (viewModel.errorMessage.isNotEmpty && viewModel.restaurants.isEmpty) {
                   return Center(
                     child: Text(
                       viewModel.errorMessage,
@@ -200,10 +213,27 @@ class _RestaurantsListPageState extends State<RestaurantsListPage> {
                       address: restaurant.address,
                       restaurantType: restaurant.cuisineType,
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => RestaurantPage(restaurant: restaurant)),
-                        );
+                        if (restaurantsViewModel.isConnected) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => RestaurantPage(restaurant: restaurant)),
+                          );
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                'This feature requires internet connection!',
+                                style: TextStyle(
+                                  fontSize: 20.0,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              backgroundColor: Colors.black,
+                            ),
+
+                          );
+                        }
                       },
                     );
                   },

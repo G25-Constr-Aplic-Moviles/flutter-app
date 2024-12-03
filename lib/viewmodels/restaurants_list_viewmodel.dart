@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../models/restaurant_model.dart';
 import '../services/api_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
 class RestaurantsListViewModel extends ChangeNotifier {
   List<Restaurant> _restaurants = [];
@@ -19,9 +22,13 @@ class RestaurantsListViewModel extends ChangeNotifier {
 
   RestaurantsListViewModel() {
     _checkConnectivity();
+    _loadCachedRestaurants();
     Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       if (result != ConnectivityResult.none) {
         fetchRestaurants();
+      } else {
+        _isConnected = false;
+        notifyListeners();
       }
     });
   }
@@ -48,6 +55,7 @@ class RestaurantsListViewModel extends ChangeNotifier {
       _restaurants = data.map((item) => Restaurant.fromJson(item)).toList();
       _filteredRestaurants = _restaurants;
       _errorMessage = '';
+      _cacheRestaurants();
     } catch (e) {
       _errorMessage = 'No internet connection!';
       _isConnected = false;
@@ -73,6 +81,7 @@ class RestaurantsListViewModel extends ChangeNotifier {
       _restaurants = data.map((item) => Restaurant.fromJson(item)).toList();
       _filteredRestaurants = _restaurants;
       _errorMessage = '';
+      _cacheRestaurants();
     } catch (e) {
       _errorMessage = 'No internet connection!';
       _isConnected = false;
@@ -106,5 +115,22 @@ class RestaurantsListViewModel extends ChangeNotifier {
 
   Set<String> getCuisineTypes() {
     return _restaurants.map((restaurant) => restaurant.cuisineType).toSet();
+  }
+
+  Future<void> _cacheRestaurants() async {
+    final prefs = await SharedPreferences.getInstance();
+    final String encodedData = jsonEncode(_restaurants.map((restaurant) => restaurant.toMap()).toList());
+    await prefs.setString('cachedRestaurants', encodedData);
+  }
+
+  Future<void> _loadCachedRestaurants() async {
+    final prefs = await SharedPreferences.getInstance();
+    final String? cachedData = prefs.getString('cachedRestaurants');
+    if (cachedData != null) {
+      List<dynamic> data = jsonDecode(cachedData);
+      _restaurants = data.map((item) => Restaurant.fromMap(item)).toList();
+      _filteredRestaurants = _restaurants;
+      notifyListeners();
+    }
   }
 }
